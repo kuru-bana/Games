@@ -50,14 +50,14 @@
 <div id="gameContainer">
   <canvas id="unity-canvas"></canvas>
 </div>
-<script src="https://cdn.jsdelivr.net/gh/kuru-bana/End-CREDITS@main/white-pen-road/Build/Release.loader.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/white-pen-road/Build/Release.loader.js"></script>
 <script>
 (function () {
   var statusEl  = document.getElementById('status');
   var statusTxt = document.getElementById('statusText');
   var barFill   = document.getElementById('barFill');
   var pctEl     = document.getElementById('pct');
-  var BASE = 'https://cdn.jsdelivr.net/gh/kuru-bana/End-CREDITS@main/white-pen-road/';
+  var BASE = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/white-pen-road/';
   createUnityInstance(document.getElementById('unity-canvas'), {
     dataUrl:            BASE + 'Build/Release.data.unityweb',
     frameworkUrl:       BASE + 'Build/Release.framework.js.unityweb',
