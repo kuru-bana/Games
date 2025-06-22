@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+  <html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第9病棟</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 100%; height: 100%; background: #080808; overflow: hidden; }
+      #loading-screen {
+        position: fixed; inset: 0; background: #080808;
+        display: flex; flex-direction: column; align-items: center;
+        justify-content: center; gap: 18px; z-index: 100;
+      }
+      #loading-screen .thumb {
+        width: 200px; height: 200px; object-fit: cover; border-radius: 8px;
+        border: 1px solid #b0000044;
+        box-shadow: 0 0 32px #b0000066, 0 4px 24px #00000099;
+      }
+      #loading-screen h2 {
+        font-family: "Courier New", monospace; font-size: 26px; letter-spacing: 6px;
+        color: #cc0000; text-shadow: 0 0 16px #cc000099;
+      }
+      #loading-screen .subtitle {
+        font-family: "Courier New", monospace; font-size: 11px;
+        color: #555; letter-spacing: 2px;
+      }
+      #loading-screen .progress-wrap {
+        width: 280px; height: 4px; background: #1a0000; border-radius: 2px; overflow: hidden;
+        border: 1px solid #330000;
+      }
+      #loading-screen .progress-fill {
+        height: 100%; background: linear-gradient(90deg, #660000, #cc0000);
+        width: 0%; transition: width 0.3s; border-radius: 2px;
+      }
+      #loading-screen .pct {
+        font-family: "Courier New", monospace; color: #660000; font-size: 12px; letter-spacing: 2px;
+      }
+      #loading-screen .cdn-label {
+        font-family: "Courier New", monospace; color: #2a2a2a; font-size: 10px; letter-spacing: 1px;
+      }
+      #gameContainer {
+        display: none; position: fixed; inset: 0;
+        background: #000; align-items: center; justify-content: center;
+      }
+      #gameContainer.active { display: flex; }
+      #unity-canvas {
+        display: block;
+        width: min(100vw, calc(100vh * 16 / 9));
+        height: min(100vh, calc(100vw * 9 / 16));
+        max-width: 100vw; max-height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+  <div id="loading-screen">
+    <img class="thumb"
+      src="https://os-worker.unityroom.com/unityroom_production/icon/172303/icon_20250623_192021.png?h=1750674021"
+      alt="第9病棟" onerror="this.style.display='none'">
+    <h2>第9病棟</h2>
+    <div class="subtitle">hospital corridor horror game</div>
+    <div class="progress-wrap"><div class="progress-fill" id="pf"></div></div>
+    <div class="pct" id="pct">0%</div>
+    <div class="cdn-label" id="cdn-label">接続中...</div>
+  </div>
+  <div id="gameContainer">
+    <canvas id="unity-canvas"></canvas>
+  </div>
+  <script>
+  (function () {
+    var CDN = "https://cdn.jsdelivr.net/gh/kuru-bana/End-CREDITS@main/hospital-corridor/webgl";
+    var RAW = "https://raw.githubusercontent.com/kuru-bana/End-CREDITS/main/hospital-corridor/webgl";
+
+    var pfEl     = document.getElementById("pf");
+    var pctEl    = document.getElementById("pct");
+    var cdnLabel = document.getElementById("cdn-label");
+    var loadingEl= document.getElementById("loading-screen");
+    var container= document.getElementById("gameContainer");
+    var canvas   = document.getElementById("unity-canvas");
+
+    var started = false;
+    function showGame() {
+      if (started) return; started = true;
+      setTimeout(function () {
+        loadingEl.style.display = "none";
+        container.classList.add("active");
+      }, 800);
+    }
+    function showError(msg) {
+      loadingEl.innerHTML =
+        "<h2 style=" + '"' + "color:#cc0000;font-family:monospace;letter-spacing:4px;" + '"' + ">ERROR</h2>" +
+        "<p style=" + '"' + "color:#555;font-family:monospace;font-size:12px;text-align:center;max-width:300px;padding:0 20px;" + '"' + ">" +
+        (msg || "読み込みに失敗しました") + "</p>";
+    }
+    function setProgress(p) {
+      var pct = Math.round(p * 100);
+      pfEl.style.width = pct + "%";
+      pctEl.textContent = pct + "%";
+      if (p >= 1) showGame();
+    }
+    function startGame() {
+      var config = {
+        dataUrl:            RAW + "/webgl.data",
+        frameworkUrl:       CDN + "/webgl.framework.js",
+        codeUrl:            RAW + "/webgl.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName:        "empty",
+        productName:        "第9病棟",
+        productVersion:     "0"
+      };
+      cdnLabel.textContent = "ゲームデータを読み込み中...";
+      createUnityInstance(canvas, config, function (progress) {
+        setProgress(progress);
+      }).then(function () {
+        showGame();
+      }).catch(function (message) {
+        showError(message);
+      });
+      setTimeout(showGame, 180000);
+    }
+    function loadLoader() {
+      var sources = [
+        { url: CDN + "/webgl.loader.js", label: "jsDelivr" },
+        { url: RAW + "/webgl.loader.js", label: "GitHub Raw" }
+      ];
+      var idx = 0;
+      function tryNext() {
+        if (idx >= sources.length) { showError("ローダーの読み込みに失敗しました"); return; }
+        var src = sources[idx++];
+        cdnLabel.textContent = src.label + " から接続中...";
+        var s = document.createElement("script");
+        s.src = src.url;
+        s.onload = function () { cdnLabel.textContent = src.label + " 接続成功"; startGame(); };
+        s.onerror = function () { tryNext(); };
+        document.body.appendChild(s);
+      }
+      tryNext();
+    }
+    loadLoader();
+  })();
+  </script>
+  </body>
+  </html>

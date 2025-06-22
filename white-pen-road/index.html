@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>White Pen Road</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; background: #1a1a2e; overflow: hidden; }
+    body { display: flex; align-items: center; justify-content: center; }
+    #status {
+      position: fixed; inset: 0; background: #1a1a2e;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 14px; z-index: 100;
+    }
+    #status h2 {
+      font-family: "Courier New", monospace; font-size: 20px;
+      letter-spacing: 5px; color: #e0e0e0;
+    }
+    #status .sub {
+      font-family: "Courier New", monospace; font-size: 11px;
+      color: #666; letter-spacing: 2px;
+    }
+    #status .bar-wrap {
+      width: 260px; height: 4px; background: #2a2a4e; border-radius: 2px; overflow: hidden;
+    }
+    #status .bar-fill {
+      height: 100%; background: linear-gradient(90deg, #4a4a8e, #8080ff);
+      width: 0%; transition: width 0.3s;
+    }
+    #status .pct { font-family: "Courier New", monospace; color: #6666cc; font-size: 12px; }
+    #gameContainer {
+      width: 100vw; height: 100vh;
+      position: relative; overflow: hidden;
+    }
+    #unity-canvas {
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+<body>
+<div id="status">
+  <h2>WHITE PEN ROAD</h2>
+  <div class="sub" id="statusText">Loading...</div>
+  <div class="bar-wrap"><div class="bar-fill" id="barFill"></div></div>
+  <div class="pct" id="pct">0%</div>
+</div>
+<div id="gameContainer">
+  <canvas id="unity-canvas"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/gh/kuru-bana/End-CREDITS@main/white-pen-road/Build/Release.loader.js"></script>
+<script>
+(function () {
+  var statusEl  = document.getElementById('status');
+  var statusTxt = document.getElementById('statusText');
+  var barFill   = document.getElementById('barFill');
+  var pctEl     = document.getElementById('pct');
+  var BASE = 'https://cdn.jsdelivr.net/gh/kuru-bana/End-CREDITS@main/white-pen-road/';
+  createUnityInstance(document.getElementById('unity-canvas'), {
+    dataUrl:            BASE + 'Build/Release.data.unityweb',
+    frameworkUrl:       BASE + 'Build/Release.framework.js.unityweb',
+    codeUrl:            BASE + 'Build/Release.wasm.unityweb',
+    streamingAssetsUrl: BASE + 'StreamingAssets',
+    companyName:        'Kogane Games',
+    productName:        'WhitePenRoad',
+    productVersion:     '1.0.0',
+    showBanner: function(msg, type) {
+      statusTxt.textContent = msg;
+      if (type === 'error') barFill.style.background = '#cc0000';
+    },
+  }, function (progress) {
+    var pct = Math.round(progress * 100);
+    barFill.style.width = pct + '%';
+    pctEl.textContent   = pct + '%';
+    statusTxt.textContent = 'Loading... ' + pct + '%';
+  }).then(function () {
+    statusEl.style.display = 'none';
+    var canvas = document.getElementById('unity-canvas');
+    function resize() {
+      var w = window.innerWidth, h = window.innerHeight, r = 720/1280;
+      if (w * r > h) { w = Math.ceil(h / r); }
+      h = Math.floor(w * r);
+      canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+    }
+    window.addEventListener('resize', resize);
+    resize();
+  }).catch(function (e) {
+    statusTxt.textContent = 'Error: ' + (e.message || String(e));
+    barFill.style.background = '#cc0000';
+  });
+})();
+</script>
+</body>
+</html>

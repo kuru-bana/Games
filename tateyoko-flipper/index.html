@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+  <html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>たてよこフリッパー</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 100%; height: 100%; background: #080808; overflow: hidden; }
+      #loading-screen {
+        position: fixed; inset: 0; background: #080808;
+        display: flex; flex-direction: column; align-items: center;
+        justify-content: center; gap: 18px; z-index: 100;
+      }
+      #loading-screen .thumb {
+        width: 200px; height: 200px; object-fit: cover; border-radius: 8px;
+        border: 1px solid #00440044;
+        box-shadow: 0 0 32px #00440066, 0 4px 24px #00000099;
+      }
+      #loading-screen h2 {
+        font-family: "Courier New", monospace; font-size: 22px; letter-spacing: 4px;
+        color: #44cc44; text-shadow: 0 0 16px #44cc4499;
+      }
+      #loading-screen .subtitle {
+        font-family: "Courier New", monospace; font-size: 11px;
+        color: #555; letter-spacing: 2px;
+      }
+      #loading-screen .progress-wrap {
+        width: 280px; height: 4px; background: #001a00; border-radius: 2px; overflow: hidden;
+        border: 1px solid #003300;
+      }
+      #loading-screen .progress-fill {
+        height: 100%; background: linear-gradient(90deg, #226622, #44cc44);
+        width: 0%; transition: width 0.3s; border-radius: 2px;
+      }
+      #loading-screen .pct {
+        font-family: "Courier New", monospace; color: #226622; font-size: 12px; letter-spacing: 2px;
+      }
+      #loading-screen .cdn-label {
+        font-family: "Courier New", monospace; color: #2a2a2a; font-size: 10px; letter-spacing: 1px;
+      }
+      #gameContainer {
+        display: none; position: fixed; inset: 0;
+        background: #000; align-items: center; justify-content: center;
+      }
+      #gameContainer.active { display: flex; }
+      #unity-canvas {
+        display: block;
+        width: min(100vw, calc(100vh * 16 / 9));
+        height: min(100vh, calc(100vw * 9 / 16));
+        max-width: 100vw; max-height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+  <div id="loading-screen">
+    <img class="thumb"
+      src="https://os-worker.unityroom.com/unityroom_production/icon/275344/icon_20260323_110546.gif?h=1774231546"
+      alt="たてよこフリッパー" onerror="this.style.display='none'">
+    <h2>たてよこフリッパー</h2>
+    <div class="subtitle">unityroom puzzle game</div>
+    <div class="progress-wrap"><div class="progress-fill" id="pf"></div></div>
+    <div class="pct" id="pct">0%</div>
+    <div class="cdn-label" id="cdn-label">接続中...</div>
+  </div>
+  <div id="gameContainer">
+    <canvas id="unity-canvas"></canvas>
+  </div>
+  <script>
+  (function () {
+    var CDN = "https://cdn.jsdelivr.net/gh/kuru-bana/End-CREDITS@main/tateyoko-flipper/webgl";
+    var RAW = "https://raw.githubusercontent.com/kuru-bana/End-CREDITS/main/tateyoko-flipper/webgl";
+
+    var pfEl     = document.getElementById("pf");
+    var pctEl    = document.getElementById("pct");
+    var cdnLabel = document.getElementById("cdn-label");
+    var loadingEl= document.getElementById("loading-screen");
+    var container= document.getElementById("gameContainer");
+    var canvas   = document.getElementById("unity-canvas");
+
+    var started = false;
+    function showGame() {
+      if (started) return; started = true;
+      setTimeout(function () {
+        loadingEl.style.display = "none";
+        container.classList.add("active");
+      }, 800);
+    }
+    function showError(msg) {
+      loadingEl.innerHTML =
+        "<h2 style=" + '"' + "color:#44cc44;font-family:monospace;letter-spacing:4px;" + '"' + ">ERROR</h2>" +
+        "<p style=" + '"' + "color:#555;font-family:monospace;font-size:12px;text-align:center;max-width:300px;padding:0 20px;" + '"' + ">" +
+        (msg || "読み込みに失敗しました") + "</p>";
+    }
+    function setProgress(p) {
+      var pct = Math.round(p * 100);
+      pfEl.style.width = pct + "%";
+      pctEl.textContent = pct + "%";
+      if (p >= 1) showGame();
+    }
+    function startGame() {
+      var config = {
+        dataUrl:            RAW + "/webgl.data",
+        frameworkUrl:       CDN + "/webgl.framework.js",
+        codeUrl:            RAW + "/webgl.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName:        "empty",
+        productName:        "tateyoko-flipper",
+        productVersion:     "0"
+      };
+      cdnLabel.textContent = "ゲームデータを読み込み中...";
+      createUnityInstance(canvas, config, function (progress) {
+        setProgress(progress);
+      }).then(function () {
+        showGame();
+      }).catch(function (message) {
+        showError(message);
+      });
+      setTimeout(showGame, 180000);
+    }
+    function loadLoader() {
+      var sources = [
+        { url: CDN + "/webgl.loader.js", label: "jsDelivr" },
+        { url: RAW + "/webgl.loader.js", label: "GitHub Raw" }
+      ];
+      var idx = 0;
+      function tryNext() {
+        if (idx >= sources.length) { showError("ローダーの読み込みに失敗しました"); return; }
+        var src = sources[idx++];
+        cdnLabel.textContent = src.label + " から接続中...";
+        var s = document.createElement("script");
+        s.src = src.url;
+        s.onload = function () { cdnLabel.textContent = src.label + " 接続成功"; startGame(); };
+        s.onerror = function () { tryNext(); };
+        document.body.appendChild(s);
+      }
+      tryNext();
+    }
+    loadLoader();
+  })();
+  </script>
+  </body>
+  </html>

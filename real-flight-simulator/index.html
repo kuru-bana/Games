@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real Flight Simulator</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; background: #1a1a2a; overflow: hidden; }
+    body { display: flex; align-items: center; justify-content: center; }
+    #status {
+      position: fixed; inset: 0; background: #1a1a2a;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 14px; z-index: 100;
+    }
+    #status h2 {
+      font-family: "Courier New", monospace; font-size: 18px;
+      letter-spacing: 4px; color: #64b5f6; text-shadow: 0 0 12px #64b5f666;
+    }
+    #status .sub { font-family: "Courier New", monospace; font-size: 11px; color: #555; letter-spacing: 2px; }
+    #status .bar-wrap { width: 260px; height: 4px; background: #0a0a2a; border-radius: 2px; overflow: hidden; }
+    #status .bar-fill { height: 100%; background: linear-gradient(90deg, #1565c0, #64b5f6); width: 0%; transition: width 0.3s; }
+    #status .pct { font-family: "Courier New", monospace; color: #1e88e5; font-size: 12px; }
+    #gameContainer {
+      width: 100vw; height: 100vh;
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+<div id="status">
+  <h2>REAL FLIGHT SIMULATOR</h2>
+  <div class="sub" id="statusText">Loading...</div>
+  <div class="bar-wrap"><div class="bar-fill" id="barFill"></div></div>
+  <div class="pct" id="pct">0%</div>
+</div>
+<div id="gameContainer"></div>
+<script src="https://cdn.jsdelivr.net/gh/kuru-bana/End-CREDITS@main/real-flight-simulator/Build/UnityLoader.js"></script>
+<script>
+(function () {
+  var statusEl  = document.getElementById('status');
+  var statusTxt = document.getElementById('statusText');
+  var barFill   = document.getElementById('barFill');
+  var pctEl     = document.getElementById('pct');
+
+  function UnityProgress(gameInstance, progress) {
+    var pct = Math.round(progress * 100);
+    barFill.style.width = pct + '%';
+    pctEl.textContent   = pct + '%';
+    statusTxt.textContent = 'Loading... ' + pct + '%';
+    if (progress === 1) { statusEl.style.display = 'none'; }
+  }
+
+  var BASE = 'https://raw.githubusercontent.com/kuru-bana/End-CREDITS/main/real-flight-simulator/Build/';
+  UnityLoader.instantiate('gameContainer', BASE + 'game.json', { onProgress: UnityProgress });
+})();
+</script>
+</body>
+</html>
