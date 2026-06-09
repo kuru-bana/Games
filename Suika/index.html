@@ -75,7 +75,9 @@ window.YaGames = {
         window.addEventListener('touchstart', () => { window.focus(); canvas.focus(); });
 
         const CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Suika/';
-        const buildUrl = 'Build';
+        const _h = window.location.hostname;
+        const _isLocal = _h === 'localhost' || _h.endsWith('.repl.co') || _h.endsWith('.replit.dev') || _h.endsWith('.replit.app') || _h.endsWith('.kirk.replit.dev');
+        const buildUrl = _isLocal ? 'Build' : (CDN + 'Build');
         const loaderUrl = buildUrl + '/game5.loader.js';
         const config = {
             dataUrl: buildUrl + '/game5.data',
