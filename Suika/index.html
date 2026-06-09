@@ -75,12 +75,12 @@ window.YaGames = {
         window.addEventListener('touchstart', () => { window.focus(); canvas.focus(); });
 
         const CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Suika/';
-        const buildUrl = CDN + 'Build';
+        const buildUrl = 'Build';
         const loaderUrl = buildUrl + '/game5.loader.js';
         const config = {
-            dataUrl: buildUrl + '/game5.data.unityweb',
-            frameworkUrl: buildUrl + '/game5.framework.js.unityweb',
-            codeUrl: buildUrl + '/game5.wasm.unityweb',
+            dataUrl: buildUrl + '/game5.data',
+            frameworkUrl: buildUrl + '/game5.framework.js',
+            codeUrl: buildUrl + '/game5.wasm',
             streamingAssetsUrl: 'StreamingAssets',
             companyName: 'DefaultCompany',
             productName: 'suikaGame',
