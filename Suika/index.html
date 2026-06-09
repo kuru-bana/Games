@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Suika Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Suika/style.css"/>
+<style>
+  canvas:focus { outline: none; }
+  html, body {
+    padding: 0; margin: 0;
+    overflow: hidden;
+    -webkit-touch-callout:none; -webkit-user-select:none; -khtml-user-select:none;
+    -moz-user-select:none; -ms-user-select:none; user-select:none;
+    -webkit-tap-highlight-color:rgba(0,0,0,0);
+    height: 100%;
+    background-color: #DEAE70;
+    background-position-x: 50%; background-repeat: no-repeat;
+    background-size: cover; background-attachment: fixed;
+  }
+</style>
+<script>
+window.YaGames = {
+  init: function() {
+    return Promise.resolve({
+      environment: { i18n:{lang:'en',tld:'com'}, app:{id:'263978'}, browser:{lang:'en'}, payload:'' },
+      deviceInfo: { type:'desktop', isMobile:()=>false, isDesktop:()=>true, isTablet:()=>false, isTV:()=>false },
+      adv: {
+        showFullscreenAdv: function(o) { if(o&&o.callbacks&&o.callbacks.onClose) o.callbacks.onClose(false); },
+        showRewardedVideo: function(o) { if(o&&o.callbacks) { if(o.callbacks.onRewarded) o.callbacks.onRewarded(); if(o.callbacks.onClose) o.callbacks.onClose(); } },
+        getBannerAdvStatus: ()=>Promise.resolve({stickyAdvIsShowing:false}),
+        showBannerAdv: ()=>Promise.resolve({}),
+        hideBannerAdv: ()=>Promise.resolve({})
+      },
+      auth: { openAuthDialog: ()=>Promise.reject(new Error('not supported')) },
+      getPlayer: ()=>Promise.resolve({ getUniqueID:()=>'local', getName:()=>'Player', getPhoto:()=>'', getMode:()=>'lite', isAuthorized:()=>false, getData:()=>Promise.resolve({}), setData:()=>Promise.resolve(), getStats:()=>Promise.resolve({}), setStats:()=>Promise.resolve(), incrementStats:()=>Promise.resolve() }),
+      getLeaderboards: ()=>Promise.resolve({ setLeaderboardScore:()=>Promise.resolve(), getLeaderboardDescription:()=>Promise.resolve({}), getLeaderboardEntries:()=>Promise.resolve({entries:[],userRank:0}) }),
+      getPayments: ()=>Promise.reject(new Error('not supported')),
+      shortcut: { canShowPrompt:()=>Promise.resolve({canShow:false}), showPrompt:()=>Promise.resolve() },
+      feedback: { canReview:()=>Promise.resolve({value:false}), requestReview:()=>Promise.resolve({feedbackSent:false}) },
+      features: { LoadingAPI: { ready:()=>{} } }
+    });
+  }
+};
+</script>
+</head>
+<body class="dark">
+<div id="unity-container" class="unity-desktop">
+<canvas id="unity-canvas" tabindex="-1"></canvas>
+</div>
+<div id="loading-cover" style="display:none;">
+<div id="unity-loading-bar">
+<div id="unity-logo"><img src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Suika/logo.png"/></div>
+<div id="unity-progress-bar-empty" style="display: none;">
+<div id="unity-progress-bar-full"></div>
+</div>
+<div class="spinner"></div>
+</div>
+</div>
+<script>
+        const container = document.querySelector("#unity-container");
+        const canvas = document.querySelector("#unity-canvas");
+        const loadingCover = document.querySelector("#loading-cover");
+        const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
+        const progressBarFull = document.querySelector("#unity-progress-bar-full");
+        const spinner = document.querySelector('.spinner');
+
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        var isTouchDevice = ('ontouchstart' in window || navigator.maxTouchPoints > 0 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+        var isEnglish = window.location.href.indexOf(".com") > -1;
+
+        window.addEventListener('pointerdown', () => { window.focus(); canvas.focus(); });
+        window.addEventListener('touchstart', () => { window.focus(); canvas.focus(); });
+
+        const CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Suika/';
+        const buildUrl = CDN + 'Build';
+        const loaderUrl = buildUrl + '/game5.loader.js';
+        const config = {
+            dataUrl: buildUrl + '/game5.data.unityweb',
+            frameworkUrl: buildUrl + '/game5.framework.js.unityweb',
+            codeUrl: buildUrl + '/game5.wasm.unityweb',
+            streamingAssetsUrl: 'StreamingAssets',
+            companyName: 'DefaultCompany',
+            productName: 'suikaGame',
+            productVersion: '1.0',
+        };
+
+        function updateAspectRatio() {
+            var ww = window.innerWidth, wh = window.innerHeight, ar = 9/16;
+            if (ww/wh > ar) { canvas.style.width = wh*ar+'px'; canvas.style.height = '100vh'; }
+            else { canvas.style.width = '100vw'; canvas.style.height = ww/ar+'px'; }
+            canvas.style.margin = 'auto';
+            canvas.style.top = canvas.style.left = canvas.style.bottom = canvas.style.right = '0';
+        }
+
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) container.className = 'unity-mobile';
+
+        loadingCover.style.display = '';
+
+        let myGameInstance = null, initSDK = false, initGame = false;
+        let photoSizeForInit, scopesForInit, nowFullAdOpen = false, letGameReadyApi = true;
+
+        function NotAuthorized() {
+            try { if(myGameInstance) myGameInstance.SendMessage('YandexGame','SetInitializationSDK',JSON.stringify({playerAuth:'rejected',playerName:'unauthorized',playerId:'unauthorized',playerPhoto:'null'})); } catch(e){}
+        }
+        function GameReadyAPI() { if(letGameReadyApi&&window.ysdk){ ysdk.features.LoadingAPI?.ready(); letGameReadyApi=false; } }
+        function InitPlayer(photoSize, _scopes) {
+            try {
+                return ysdk.getPlayer({scopes:_scopes}).then(_player=>{
+                    if(_player.getMode()==='lite') NotAuthorized();
+                    else { if(myGameInstance) myGameInstance.SendMessage('YandexGame','SetInitializationSDK',JSON.stringify({playerAuth:'resolved',playerName:_player.getName(),playerId:_player.getUniqueID(),playerPhoto:_player.getPhoto(photoSize)})); window.focus(); }
+                }).catch(()=>NotAuthorized());
+            } catch(e){ NotAuthorized(); }
+        }
+        function FullAdShow() {
+            try { window.ysdk.adv.showFullscreenAdv({callbacks:{
+                onOpen:()=>{ nowFullAdOpen=true; if(myGameInstance) myGameInstance.SendMessage('YandexGame','OpenFullAd'); },
+                onClose:(wasShown)=>{ nowFullAdOpen=false; if(myGameInstance) myGameInstance.SendMessage('YandexGame','CloseFullAd',wasShown?'true':'false'); window.focus(); },
+                onError:()=>{ if(myGameInstance) myGameInstance.SendMessage('YandexGame','ErrorFullAd'); window.focus(); }
+            }}); } catch(e){}
+        }
+        function RewardedShow(id) {
+            try { window.ysdk.adv.showRewardedVideo({callbacks:{
+                onOpen:()=>{ if(myGameInstance) myGameInstance.SendMessage('YandexGame','OpenVideo'); },
+                onClose:()=>{ if(myGameInstance) myGameInstance.SendMessage('YandexGame','CloseVideo'); window.focus(); },
+                onRewarded:()=>{ if(myGameInstance) myGameInstance.SendMessage('YandexGame','RewardVideo',id); },
+                onError:()=>{ if(myGameInstance) myGameInstance.SendMessage('YandexGame','ErrorVideo'); }
+            }}); } catch(e){}
+        }
+        function InitPayments() { try { ysdk.getPayments({signed:true}).then(p=>{ window.payments=p; }).catch(()=>{}); } catch(e){} }
+        function InitYandex() {
+            YaGames.init().then(ysdk=>{
+                window.ysdk = ysdk;
+                InitPayments();
+                try { ysdk.shortcut.canShowPrompt().then(p=>{}); } catch(e){}
+                try { ysdk.feedback.canReview().then(()=>{}); } catch(e){}
+                FullAdShow();
+                if(initGame) InitPlayer(photoSizeForInit, scopesForInit);
+                initSDK = true;
+            });
+        }
+        function InitGame(photoSize, scopes, gameReadyApi) {
+            initGame=true; photoSizeForInit=photoSize; scopesForInit=scopes;
+            if(initSDK){ if(gameReadyApi) GameReadyAPI(); InitPlayer(photoSize,scopes); }
+            else { InitYandex(); setTimeout(()=>{ if(!initSDK) NotAuthorized(); },1000); }
+            if(nowFullAdOpen&&myGameInstance) myGameInstance.SendMessage('YandexGame','OpenFullAd');
+        }
+        InitYandex();
+
+        const script = document.createElement('script');
+        script.src = loaderUrl;
+        script.onerror = ()=>{ console.error('Failed to load game'); };
+        script.onload = ()=>{
+            createUnityInstance(canvas, config, (progress)=>{
+                spinner.style.display = 'none';
+                progressBarEmpty.style.display = '';
+                progressBarFull.style.width = `${100*progress}%`;
+            }).then((unityInstance)=>{
+                myGameInstance = unityInstance;
+                loadingCover.style.display = 'none';
+                canvas.style.backgroundImage = 'none';
+            }).catch(msg=>{ alert(msg); });
+        };
+        document.body.appendChild(script);
+</script>
+</body>
+</html>
