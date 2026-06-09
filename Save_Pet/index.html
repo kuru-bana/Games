@@ -20,6 +20,25 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Save_Pet/style-mobile.25fc5.css"/>
 <link rel="icon" href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Save_Pet/favicon.8de18.ico"/>
 <script>
+(function() {
+  var ASSET_BASE = 'https://app-198266.games.s3.yandex.net/198266/j1yldqmn47rvmeseyrc9lqv4auj6o9as/';
+  var origOpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function(method, url) {
+    if (typeof url === 'string' && (url.indexOf('://') === -1) && url.indexOf('assets/') === 0) {
+      url = ASSET_BASE + url;
+    }
+    return origOpen.apply(this, arguments);
+  };
+  var origFetch = window.fetch;
+  window.fetch = function(url, opts) {
+    if (typeof url === 'string' && (url.indexOf('://') === -1) && url.indexOf('assets/') === 0) {
+      url = ASSET_BASE + url;
+    }
+    return origFetch.call(this, url, opts);
+  };
+})();
+</script>
+<script>
 window.YaGames = {
   init: function() {
     return Promise.resolve({
@@ -54,68 +73,68 @@ window.YaGames = {
 <script src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Save_Pet/src/settings.aaf8f.js" charset="utf-8"></script>
 <script src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Save_Pet/main.e0f72.js" charset="utf-8"></script>
 <script type="text/javascript">
-		(function () {
-			var CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Save_Pet/';
-			window.curLang = "en";
-			YaGames.init().then(ysdk => {
-				window.ysdk = ysdk;
-				var lang = ysdk.environment.i18n.lang;
-				if (['ru','tr','es','ar','hi','pt'].indexOf(lang) >= 0) window.curLang = lang;
-			});
-			var debug = window._CCSettings.debug;
-			var splash = document.getElementById('splash');
-			splash.style.display = 'block';
+                (function () {
+                        var CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Save_Pet/';
+                        window.curLang = "en";
+                        YaGames.init().then(ysdk => {
+                                window.ysdk = ysdk;
+                                var lang = ysdk.environment.i18n.lang;
+                                if (['ru','tr','es','ar','hi','pt'].indexOf(lang) >= 0) window.curLang = lang;
+                        });
+                        var debug = window._CCSettings.debug;
+                        var splash = document.getElementById('splash');
+                        splash.style.display = 'block';
 
-			function loadScript(moduleName, cb) {
-				function scriptLoaded() {
-					document.body.removeChild(domScript);
-					domScript.removeEventListener('load', scriptLoaded, false);
-					cb && cb();
-				}
-				var domScript = document.createElement('script');
-				domScript.async = true;
-				domScript.src = moduleName;
-				domScript.addEventListener('load', scriptLoaded, false);
-				document.body.appendChild(domScript);
-			}
+                        function loadScript(moduleName, cb) {
+                                function scriptLoaded() {
+                                        document.body.removeChild(domScript);
+                                        domScript.removeEventListener('load', scriptLoaded, false);
+                                        cb && cb();
+                                }
+                                var domScript = document.createElement('script');
+                                domScript.async = true;
+                                domScript.src = moduleName;
+                                domScript.addEventListener('load', scriptLoaded, false);
+                                document.body.appendChild(domScript);
+                        }
 
-			loadScript(debug ? CDN+'cocos2d-js.js' : CDN+'cocos2d-js-min.4ce14.js', function () {
-				if (CC_PHYSICS_BUILTIN || CC_PHYSICS_CANNON) {
-					loadScript(debug ? CDN+'physics.js' : CDN+'physics-min.941a2.js', window.boot);
-				} else {
-					window.boot();
-				}
-			});
-		})();
-	</script>
+                        loadScript(debug ? CDN+'cocos2d-js.js' : CDN+'cocos2d-js-min.4ce14.js', function () {
+                                if (CC_PHYSICS_BUILTIN || CC_PHYSICS_CANNON) {
+                                        loadScript(debug ? CDN+'physics.js' : CDN+'physics-min.941a2.js', window.boot);
+                                } else {
+                                        window.boot();
+                                }
+                        });
+                })();
+        </script>
 <script type="text/javascript">
-		window.getLangByKey = function (enkey) {
-			let curIndex = 0;
-			if (window["curLang"] == "ru") curIndex = 1;
-			else if (window["curLang"] == "tr") curIndex = 2;
-			else if (window["curLang"] == "es") curIndex = 3;
-			else if (window["curLang"] == "ar") curIndex = 4;
-			else if (window["curLang"] == "pt") curIndex = 5;
-			else if (window["curLang"] == "hi") curIndex = 6;
-			let keys = {
-				"NoCoin": ["Not Enough Coin","Недостаточно монет","Yeterli değil","No es suficiente","ليس كافياً","Não é suficiente","पर्याप्त नहीं"],
-				"Fail": ["Fail","Провал","Başarısızlık","Fracaso","يفشل","Falha","विफलता"],
-				"Reward": ["Reward ","Награда ","ödüllendir","Premio","جائزة","Recompensa","इनाम"],
-				"video_success": ["Get video rewards!","Получайте награды за видео!","Video ödülleri alın!"," ¡Obtener recompensas!","احصل على مكافآت بالفيديو","Obtenha recompensas!","पुरस्कार प्राप्त करें!"],
-				"video_fail": ["Video is wrong, please try later!","Ошибка при воспроизведении видео!","video yanlış lütfen daha sonra deneyiniz"," Vídeo incorrecto","الفيديو خاطئ","Vídeo incorreto","वीडियो गलत है"],
-				"get_sign_reward": ["Sign in successfully!","Войдите в систему успешно!","Başarıyla oturum açın!","Sesión iniciada con éxito","تسجيل الدخول بنجاح","Login com sucesso","सफलतापूर्वक साइन इन किया गया"],
-				"get_three_more": [" Choose three more box","Выберите еще три коробки","Üç kutu seç","Elija tres cajas","لا يكفي","Escolha três caixas","तीन बॉक्स चुनें"],
-				"level": ["Level","уровень","Seviye","Nivel","مستوى","Nível","स्तर"],
-				"start": ["Start","Старт","Başlat","Comenzar","ابدأ","Iniciar","शुरू"],
-				"no": ["Quit","Нет","Hayır","No","لا","Não","नहीं"],
-				"get": ["Get","Получить","Al","Obtener","احصل على","Obter","प्राप्त करें"],
-				"view_tips": ["View Tips","Просмотреть советы","İpuçlarını görüntüle","Ver consejos","عرض النصائح","Ver dicas","टिप्स देखें"],
-				"sound": ["Sound","Звук","Ses","Sonido","صوت","Som","ध्वनि"],
-				"ok": ["OK","хорошо","Tamam","OK","حسناً","OK","ठीक है"],
-			};
-			if (!keys[enkey]) return enkey;
-			return " " + keys[enkey][curIndex];
-		}
-	</script>
+                window.getLangByKey = function (enkey) {
+                        let curIndex = 0;
+                        if (window["curLang"] == "ru") curIndex = 1;
+                        else if (window["curLang"] == "tr") curIndex = 2;
+                        else if (window["curLang"] == "es") curIndex = 3;
+                        else if (window["curLang"] == "ar") curIndex = 4;
+                        else if (window["curLang"] == "pt") curIndex = 5;
+                        else if (window["curLang"] == "hi") curIndex = 6;
+                        let keys = {
+                                "NoCoin": ["Not Enough Coin","Недостаточно монет","Yeterli değil","No es suficiente","ليس كافياً","Não é suficiente","पर्याप्त नहीं"],
+                                "Fail": ["Fail","Провал","Başarısızlık","Fracaso","يفشل","Falha","विफलता"],
+                                "Reward": ["Reward ","Награда ","ödüllendir","Premio","جائزة","Recompensa","इनाम"],
+                                "video_success": ["Get video rewards!","Получайте награды за видео!","Video ödülleri alın!"," ¡Obtener recompensas!","احصل على مكافآت بالفيديو","Obtenha recompensas!","पुरस्कार प्राप्त करें!"],
+                                "video_fail": ["Video is wrong, please try later!","Ошибка при воспроизведении видео!","video yanlış lütfen daha sonra deneyiniz"," Vídeo incorrecto","الفيديو خاطئ","Vídeo incorreto","वीडियो गलत है"],
+                                "get_sign_reward": ["Sign in successfully!","Войдите в систему успешно!","Başarıyla oturum açın!","Sesión iniciada con éxito","تسجيل الدخول بنجاح","Login com sucesso","सफलतापूर्वक साइन इन किया गया"],
+                                "get_three_more": [" Choose three more box","Выберите еще три коробки","Üç kutu seç","Elija tres cajas","لا يكفي","Escolha três caixas","तीन बॉक्स चुनें"],
+                                "level": ["Level","уровень","Seviye","Nivel","مستوى","Nível","स्तर"],
+                                "start": ["Start","Старт","Başlat","Comenzar","ابدأ","Iniciar","शुरू"],
+                                "no": ["Quit","Нет","Hayır","No","لا","Não","नहीं"],
+                                "get": ["Get","Получить","Al","Obtener","احصل على","Obter","प्राप्त करें"],
+                                "view_tips": ["View Tips","Просмотреть советы","İpuçlarını görüntüle","Ver consejos","عرض النصائح","Ver dicas","टिप्स देखें"],
+                                "sound": ["Sound","Звук","Ses","Sonido","صوت","Som","ध्वनि"],
+                                "ok": ["OK","хорошо","Tamam","OK","حسناً","OK","ठीक है"],
+                        };
+                        if (!keys[enkey]) return enkey;
+                        return " " + keys[enkey][curIndex];
+                }
+        </script>
 </body>
 </html>
