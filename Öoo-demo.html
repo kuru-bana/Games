@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+      <meta charset="utf-8"/>
+      <title>Öoo</title>
+      <style>
+          body { background: #000; color: #ccc; margin: 0; padding: 0; }
+          canvas {
+              image-rendering: optimizeSpeed;
+              -webkit-interpolation-mode: nearest-neighbor;
+              -ms-touch-action: none;
+              touch-action: none;
+              margin: 0; padding: 0; border: 0;
+          }
+          div.gm4html5_div_class { margin: 0; padding: 0; border: 0; }
+      </style>
+      <script>
+      (function() {
+          var CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/%C3%96oo-demo/Ooo/';
+
+          function needsCDN(url) {
+              if (typeof url !== 'string' || url === '') return false;
+              if (url.indexOf('http://') === 0) return false;
+              if (url.indexOf('https://') === 0) return false;
+              if (url.indexOf('data:') === 0) return false;
+              if (url.indexOf('blob:') === 0) return false;
+              if (url.indexOf('/') === 0) return false;
+              return true;
+          }
+
+          // Patch Image src (textures)
+          var imgDesc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+          if (imgDesc && imgDesc.set) {
+              Object.defineProperty(HTMLImageElement.prototype, 'src', {
+                  set: function(v) {
+                      if (needsCDN(v)) {
+                          this.crossOrigin = 'anonymous';
+                          imgDesc.set.call(this, CDN + v);
+                      } else if (v && v.indexOf('https://') === 0) {
+                          this.crossOrigin = 'anonymous';
+                          imgDesc.set.call(this, v);
+                      } else {
+                          imgDesc.set.call(this, v);
+                      }
+                  },
+                  get: imgDesc.get, configurable: true
+              });
+          }
+
+          // Patch fetch (for .dat audio/data files)
+          if (window.fetch) {
+              var origFetch = window.fetch.bind(window);
+              window.fetch = function(url, opts) {
+                  if (needsCDN(url)) url = CDN + url;
+                  return origFetch(url, opts);
+              };
+          }
+
+          // Patch XMLHttpRequest
+          var origOpen = XMLHttpRequest.prototype.open;
+          XMLHttpRequest.prototype.open = function(method, url) {
+              if (needsCDN(url)) arguments[1] = CDN + url;
+              return origOpen.apply(this, arguments);
+          };
+      })();
+      </script>
+  </head>
+  <body>
+      <div class="gm4html5_div_class" id="gm4html5_div_id">
+          <canvas id="canvas" width="960" height="720"
+              style="position:absolute;top:50%;left:50%;bottom:-50%;right:-50%;transform:translate(-50%,-50%);">
+              <p>Your browser doesn't support HTML5 canvas.</p>
+          </canvas>
+      </div>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/%C3%96oo-demo/Ooo/BOMBWAY.js"></script>
+      <script>window.onload = GameMaker_Init;</script>
+  </body>
+  </html>
