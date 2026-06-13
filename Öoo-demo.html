@@ -1,81 +1,131 @@
 <!DOCTYPE html>
-  <html lang="en">
-  <head>
-      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-      <meta charset="utf-8"/>
-      <title>Öoo</title>
-      <style>
-          body { background: #000; color: #ccc; margin: 0; padding: 0; }
-          canvas {
-              image-rendering: optimizeSpeed;
-              -webkit-interpolation-mode: nearest-neighbor;
-              -ms-touch-action: none;
-              touch-action: none;
-              margin: 0; padding: 0; border: 0;
-          }
-          div.gm4html5_div_class { margin: 0; padding: 0; border: 0; }
-      </style>
-      <script>
-      (function() {
-          var CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/%C3%96oo-demo/Ooo/';
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta charset="utf-8"/>
+    <title>Öoo</title>
+    <style>
+        body { background: #000; color: #ccc; margin: 0; padding: 0; }
+        canvas {
+            image-rendering: optimizeSpeed;
+            -webkit-interpolation-mode: nearest-neighbor;
+            -ms-touch-action: none;
+            touch-action: none;
+            margin: 0; padding: 0; border: 0;
+        }
+        div.gm4html5_div_class { margin: 0; padding: 0; border: 0; }
+    </style>
+    <script>
+    (function() {
+        var CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@latest/%C3%96oo-demo/Ooo/';
 
-          function needsCDN(url) {
-              if (typeof url !== 'string' || url === '') return false;
-              if (url.indexOf('http://') === 0) return false;
-              if (url.indexOf('https://') === 0) return false;
-              if (url.indexOf('data:') === 0) return false;
-              if (url.indexOf('blob:') === 0) return false;
-              if (url.indexOf('/') === 0) return false;
-              return true;
-          }
+        function needsCDN(url) {
+            if (typeof url !== 'string' || url === '') return false;
+            if (url.indexOf('http://') === 0) return false;
+            if (url.indexOf('https://') === 0) return false;
+            if (url.indexOf('data:') === 0) return false;
+            if (url.indexOf('blob:') === 0) return false;
+            if (url.indexOf('/') === 0) return false;
+            return true;
+        }
 
-          // Patch Image src (textures)
-          var imgDesc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
-          if (imgDesc && imgDesc.set) {
-              Object.defineProperty(HTMLImageElement.prototype, 'src', {
-                  set: function(v) {
-                      if (needsCDN(v)) {
-                          this.crossOrigin = 'anonymous';
-                          imgDesc.set.call(this, CDN + v);
-                      } else if (v && v.indexOf('https://') === 0) {
-                          this.crossOrigin = 'anonymous';
-                          imgDesc.set.call(this, v);
-                      } else {
-                          imgDesc.set.call(this, v);
-                      }
-                  },
-                  get: imgDesc.get, configurable: true
-              });
-          }
+        function isDatFile(url) {
+            return typeof url === 'string' && url.indexOf('.dat') !== -1;
+        }
 
-          // Patch fetch (for .dat audio/data files)
-          if (window.fetch) {
-              var origFetch = window.fetch.bind(window);
-              window.fetch = function(url, opts) {
-                  if (needsCDN(url)) url = CDN + url;
-                  return origFetch(url, opts);
-              };
-          }
+        // Patch Image src (textures) with CORS fix
+        var imgDesc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+        if (imgDesc && imgDesc.set) {
+            Object.defineProperty(HTMLImageElement.prototype, 'src', {
+                set: function(v) {
+                    if (needsCDN(v)) {
+                        this.crossOrigin = 'anonymous';
+                        imgDesc.set.call(this, CDN + v);
+                    } else if (v && (v.indexOf('https://') === 0 || v.indexOf('http://') === 0)) {
+                        this.crossOrigin = 'anonymous';
+                        imgDesc.set.call(this, v);
+                    } else {
+                        imgDesc.set.call(this, v);
+                    }
+                },
+                get: imgDesc.get, configurable: true
+            });
+        }
 
-          // Patch XMLHttpRequest
-          var origOpen = XMLHttpRequest.prototype.open;
-          XMLHttpRequest.prototype.open = function(method, url) {
-              if (needsCDN(url)) arguments[1] = CDN + url;
-              return origOpen.apply(this, arguments);
-          };
-      })();
-      </script>
-  </head>
-  <body>
-      <div class="gm4html5_div_class" id="gm4html5_div_id">
-          <canvas id="canvas" width="960" height="720"
-              style="position:absolute;top:50%;left:50%;bottom:-50%;right:-50%;transform:translate(-50%,-50%);">
-              <p>Your browser doesn't support HTML5 canvas.</p>
-          </canvas>
-      </div>
-      <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/%C3%96oo-demo/Ooo/BOMBWAY.js"></script>
-      <script>window.onload = GameMaker_Init;</script>
-  </body>
-  </html>
+        // Patch fetch — redirect CDN-needed paths, silently swallow .dat failures
+        if (window.fetch) {
+            var origFetch = window.fetch.bind(window);
+            window.fetch = function(url, opts) {
+                if (typeof url === 'string' && needsCDN(url)) url = CDN + url;
+                return origFetch(url, opts).catch(function(e) {
+                    if (isDatFile(String(url))) return new Response(new ArrayBuffer(0));
+                    throw e;
+                });
+            };
+        }
+
+        // Patch XMLHttpRequest — redirect to CDN, and for .dat files return empty on error
+        var origOpen = XMLHttpRequest.prototype.open;
+        var origSend = XMLHttpRequest.prototype.send;
+
+        XMLHttpRequest.prototype.open = function(method, url) {
+            if (needsCDN(url)) {
+                this._cdnUrl = CDN + url;
+                this._isDat = isDatFile(url);
+                arguments[1] = this._cdnUrl;
+            } else {
+                this._isDat = isDatFile(String(url));
+            }
+            return origOpen.apply(this, arguments);
+        };
+
+        XMLHttpRequest.prototype.send = function() {
+            if (this._isDat) {
+                var self = this;
+                var origOnLoad = this.onload;
+                var origOnError = this.onerror;
+                this.onerror = function(e) {
+                    // On .dat error, fake an empty successful response to avoid DataCloneError
+                    Object.defineProperty(self, 'status', { get: function() { return 200; }, configurable: true });
+                    Object.defineProperty(self, 'response', { get: function() { return new ArrayBuffer(0); }, configurable: true });
+                    if (origOnLoad) origOnLoad.call(self, e);
+                };
+            }
+            return origSend.apply(this, arguments);
+        };
+
+        // Patch AudioContext.decodeAudioData — silently ignore empty/invalid buffers
+        if (window.AudioContext || window.webkitAudioContext) {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            var origDecode = AC.prototype.decodeAudioData;
+            AC.prototype.decodeAudioData = function(buffer, success, error) {
+                try {
+                    if (!buffer || buffer.byteLength === 0) {
+                        if (error) error(new DOMException('empty', 'EncodingError'));
+                        return Promise.reject(new DOMException('empty', 'EncodingError')).catch(function(){});
+                    }
+                    var p = origDecode.call(this, buffer, success, error);
+                    if (p && p.catch) p.catch(function(){});
+                    return p;
+                } catch(e) {
+                    if (error) error(e);
+                    return Promise.reject(e).catch(function(){});
+                }
+            };
+        }
+    })();
+    </script>
+</head>
+<body>
+    <div class="gm4html5_div_class" id="gm4html5_div_id">
+        <canvas id="canvas" width="960" height="720"
+            style="position:absolute;top:50%;left:50%;bottom:-50%;right:-50%;transform:translate(-50%,-50%);">
+            <p>Your browser doesn't support HTML5 canvas.</p>
+        </canvas>
+    </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@latest/%C3%96oo-demo/Ooo/BOMBWAY.js"></script>
+    <script>window.onload = GameMaker_Init;</script>
+</body>
+</html>
