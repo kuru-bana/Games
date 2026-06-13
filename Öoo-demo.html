@@ -19,7 +19,8 @@
     </style>
     <script>
     (function() {
-        var CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@latest/%C3%96oo-demo/Ooo/';
+        var SHA = '5fbc517e98f74cd242b2b3950ea91b1d117eea9a';
+        var CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@' + SHA + '/%C3%96oo-demo/Ooo/';
 
         function needsCDN(url) {
             if (typeof url !== 'string' || url === '') return false;
@@ -54,7 +55,7 @@
             });
         }
 
-        // Patch fetch — redirect CDN-needed paths, silently swallow .dat failures
+        // Patch fetch — redirect to CDN, swallow .dat failures silently
         if (window.fetch) {
             var origFetch = window.fetch.bind(window);
             window.fetch = function(url, opts) {
@@ -66,17 +67,16 @@
             };
         }
 
-        // Patch XMLHttpRequest — redirect to CDN, and for .dat files return empty on error
+        // Patch XMLHttpRequest — redirect to CDN; for .dat errors return silent empty response
         var origOpen = XMLHttpRequest.prototype.open;
         var origSend = XMLHttpRequest.prototype.send;
 
         XMLHttpRequest.prototype.open = function(method, url) {
-            if (needsCDN(url)) {
-                this._cdnUrl = CDN + url;
+            if (typeof url === 'string' && needsCDN(url)) {
                 this._isDat = isDatFile(url);
-                arguments[1] = this._cdnUrl;
+                arguments[1] = CDN + url;
             } else {
-                this._isDat = isDatFile(String(url));
+                this._isDat = isDatFile(String(url || ''));
             }
             return origOpen.apply(this, arguments);
         };
@@ -84,30 +84,30 @@
         XMLHttpRequest.prototype.send = function() {
             if (this._isDat) {
                 var self = this;
-                var origOnLoad = this.onload;
                 var origOnError = this.onerror;
                 this.onerror = function(e) {
-                    // On .dat error, fake an empty successful response to avoid DataCloneError
+                    // Fake empty 200 so game falls back to individual OGG loading
                     Object.defineProperty(self, 'status', { get: function() { return 200; }, configurable: true });
                     Object.defineProperty(self, 'response', { get: function() { return new ArrayBuffer(0); }, configurable: true });
-                    if (origOnLoad) origOnLoad.call(self, e);
+                    if (self.onload) self.onload.call(self, e);
                 };
             }
             return origSend.apply(this, arguments);
         };
 
-        // Patch AudioContext.decodeAudioData — silently ignore empty/invalid buffers
-        if (window.AudioContext || window.webkitAudioContext) {
-            var AC = window.AudioContext || window.webkitAudioContext;
+        // Patch AudioContext.decodeAudioData — silently skip empty/detached buffers
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) {
             var origDecode = AC.prototype.decodeAudioData;
             AC.prototype.decodeAudioData = function(buffer, success, error) {
                 try {
                     if (!buffer || buffer.byteLength === 0) {
-                        if (error) error(new DOMException('empty', 'EncodingError'));
-                        return Promise.reject(new DOMException('empty', 'EncodingError')).catch(function(){});
+                        var err = new DOMException('empty buffer', 'EncodingError');
+                        if (error) error(err);
+                        return Promise.reject(err).catch(function(){});
                     }
                     var p = origDecode.call(this, buffer, success, error);
-                    if (p && p.catch) p.catch(function(){});
+                    if (p && p.catch) p = p.catch(function(){});
                     return p;
                 } catch(e) {
                     if (error) error(e);
@@ -125,7 +125,7 @@
             <p>Your browser doesn't support HTML5 canvas.</p>
         </canvas>
     </div>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@latest/%C3%96oo-demo/Ooo/BOMBWAY.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@5fbc517e98f74cd242b2b3950ea91b1d117eea9a/%C3%96oo-demo/Ooo/BOMBWAY.js"></script>
     <script>window.onload = GameMaker_Init;</script>
 </body>
 </html>
