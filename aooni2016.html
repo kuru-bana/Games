@@ -36,11 +36,22 @@
                 return origOpen.apply(this, arguments);
             };
 
-            // Patch Image src
+            // Patch Image src — must set crossOrigin='anonymous' BEFORE src
+            // to avoid WebGL "tainted canvas" SecurityError
             var imgDesc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
             if (imgDesc && imgDesc.set) {
                 Object.defineProperty(HTMLImageElement.prototype, 'src', {
-                    set: function(v) { imgDesc.set.call(this, needsCDN(v) ? CDN + v : v); },
+                    set: function(v) {
+                        if (needsCDN(v)) {
+                            this.crossOrigin = 'anonymous';
+                            imgDesc.set.call(this, CDN + v);
+                        } else if (v && v.indexOf('https://') === 0) {
+                            this.crossOrigin = 'anonymous';
+                            imgDesc.set.call(this, v);
+                        } else {
+                            imgDesc.set.call(this, v);
+                        }
+                    },
                     get: imgDesc.get, configurable: true
                 });
             }
