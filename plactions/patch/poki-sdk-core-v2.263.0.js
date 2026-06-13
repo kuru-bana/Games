@@ -3,6 +3,7 @@
     init: function() { return Promise.resolve(); },
     gameLoadingStart: function() {},
     gameLoadingFinished: function() {},
+    gameLoadingProgress: function(progress) {},
     gameplayStart: function() {},
     gameplayStop: function() {},
     happyTime: function() {},
