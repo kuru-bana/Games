@@ -1,94 +1,94 @@
 <!DOCTYPE html>
-  <html>
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="user-scalable=no">
-          <link rel="icon" href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/icon/icon.png" type="image/png">
-          <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/icon/icon.png">
-          <title>青鬼2016</title>
-          <meta name="description" content="館に閉じ込められた中学生達が化物から逃げつつ脱出を試みる">
-          <style>
-              body { background-color: black; margin: 0; }
-              @font-face {
-                  font-family: GameFontAooni;
-                  src: url("https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/fonts/mplus-1m-regular.ttf");
-              }
-          </style>
-          <script>
-          (function() {
-              var CDN_BASE = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/';
-              var RELATIVE = /^(?!https?:\/\/|data:|blob:|javascript:|\/)/;
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="user-scalable=no">
+        <link rel="icon" href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/icon/icon.png" type="image/png">
+        <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/icon/icon.png">
+        <title>青鬼2016</title>
+        <meta name="description" content="館に閉じ込められた中学生達が化物から逃げつつ脱出を試みる">
+        <style>
+            body { background-color: black; margin: 0; }
+            @font-face {
+                font-family: GameFontAooni;
+                src: url("https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/fonts/mplus-1m-regular.ttf");
+            }
+        </style>
+        <script>
+        (function() {
+            var CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/';
 
-              // Patch XMLHttpRequest to redirect relative paths to CDN
-              var origOpen = XMLHttpRequest.prototype.open;
-              XMLHttpRequest.prototype.open = function(method, url) {
-                  if (typeof url === 'string' && RELATIVE.test(url)) {
-                      url = CDN_BASE + url;
-                  }
-                  return origOpen.apply(this, arguments.length === 2
-                      ? [method, url]
-                      : Array.prototype.slice.call(arguments, 0).map(function(a, i) { return i === 1 ? url : a; })
-                  );
-              };
+            function needsCDN(url) {
+                if (typeof url !== 'string' || url === '') return false;
+                if (url.indexOf('http://') === 0) return false;
+                if (url.indexOf('https://') === 0) return false;
+                if (url.indexOf('data:') === 0) return false;
+                if (url.indexOf('blob:') === 0) return false;
+                if (url.indexOf('javascript:') === 0) return false;
+                if (url.indexOf('/') === 0) return false;
+                return true;
+            }
 
-              // Patch Image src setter to redirect to CDN
-              var origDesc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
-              if (origDesc && origDesc.set) {
-                  Object.defineProperty(HTMLImageElement.prototype, 'src', {
-                      set: function(value) {
-                          if (typeof value === 'string' && RELATIVE.test(value)) {
-                              value = CDN_BASE + value;
-                          }
-                          origDesc.set.call(this, value);
-                      },
-                      get: origDesc.get,
-                      configurable: true,
-                      enumerable: origDesc.enumerable
-                  });
-              }
+            // Patch XMLHttpRequest
+            var origOpen = XMLHttpRequest.prototype.open;
+            XMLHttpRequest.prototype.open = function(method, url) {
+                if (needsCDN(url)) arguments[1] = CDN + url;
+                return origOpen.apply(this, arguments);
+            };
 
-              // Patch fetch if used
-              if (window.fetch) {
-                  var origFetch = window.fetch.bind(window);
-                  window.fetch = function(url, opts) {
-                      if (typeof url === 'string' && RELATIVE.test(url)) {
-                          url = CDN_BASE + url;
-                      }
-                      return origFetch(url, opts);
-                  };
-              }
+            // Patch Image src
+            var imgDesc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+            if (imgDesc && imgDesc.set) {
+                Object.defineProperty(HTMLImageElement.prototype, 'src', {
+                    set: function(v) { imgDesc.set.call(this, needsCDN(v) ? CDN + v : v); },
+                    get: imgDesc.get, configurable: true
+                });
+            }
 
-              // Patch Audio src for RPG Maker sound loading
-              var origAudioDesc = Object.getOwnPropertyDescriptor(HTMLAudioElement.prototype, 'src')
-                  || Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'src');
-              if (origAudioDesc && origAudioDesc.set) {
-                  Object.defineProperty(HTMLAudioElement.prototype, 'src', {
-                      set: function(value) {
-                          if (typeof value === 'string' && RELATIVE.test(value)) {
-                              value = CDN_BASE + value;
-                          }
-                          origAudioDesc.set.call(this, value);
-                      },
-                      get: origAudioDesc.get,
-                      configurable: true
-                  });
-              }
-          })();
-          </script>
-      </head>
-      <body style="background-color: black">
-          <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/pixi.js"></script>
-          <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/pixi-tilemap.js"></script>
-          <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/pixi-picture.js"></script>
-          <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/fpsmeter.js"></script>
-          <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/lz-string.js"></script>
-          <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_core.js"></script>
-          <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_managers.js"></script>
-          <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_objects.js"></script>
-          <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_scenes.js"></script>
-          <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_sprites.js"></script>
-          <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_windows.js"></script>
-          <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/plugins.js"></script>
-          <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/main.js"></script>
-      </body>
-  </html>
+            // Patch Script src (for dynamic plugin loading by PluginManager)
+            var scriptDesc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
+            if (scriptDesc && scriptDesc.set) {
+                Object.defineProperty(HTMLScriptElement.prototype, 'src', {
+                    set: function(v) { scriptDesc.set.call(this, needsCDN(v) ? CDN + v : v); },
+                    get: scriptDesc.get, configurable: true
+                });
+            }
+
+            // Patch fetch
+            if (window.fetch) {
+                var origFetch = window.fetch.bind(window);
+                window.fetch = function(url, opts) {
+                    if (needsCDN(url)) url = CDN + url;
+                    return origFetch(url, opts);
+                };
+            }
+
+            // Patch Audio src
+            var audioProto = HTMLAudioElement.prototype;
+            var audioDesc = Object.getOwnPropertyDescriptor(audioProto, 'src')
+                || Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'src');
+            if (audioDesc && audioDesc.set) {
+                Object.defineProperty(audioProto, 'src', {
+                    set: function(v) { audioDesc.set.call(this, needsCDN(v) ? CDN + v : v); },
+                    get: audioDesc.get, configurable: true
+                });
+            }
+        })();
+        </script>
+    </head>
+    <body style="background-color: black">
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/pixi.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/pixi-tilemap.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/pixi-picture.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/fpsmeter.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/lz-string.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_core.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_managers.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_objects.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_scenes.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_sprites.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_windows.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/plugins.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/main.js"></script>
+    </body>
+</html>
