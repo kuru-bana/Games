@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>END CREDITS</title>
+    <title>第9病棟</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body { width: 100%; height: 100%; background: #080808; overflow: hidden; }
@@ -16,7 +16,6 @@
         width: 200px; height: 200px; object-fit: cover; border-radius: 8px;
         border: 1px solid #b0000044;
         box-shadow: 0 0 32px #b0000066, 0 4px 24px #00000099;
-        image-rendering: pixelated;
       }
       #loading-screen h2 {
         font-family: "Courier New", monospace; font-size: 26px; letter-spacing: 6px;
@@ -31,8 +30,7 @@
         border: 1px solid #330000;
       }
       #loading-screen .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #660000, #cc0000);
+        height: 100%; background: linear-gradient(90deg, #660000, #cc0000);
         width: 0%; transition: width 0.3s; border-radius: 2px;
       }
       #loading-screen .pct {
@@ -57,10 +55,10 @@
   <body>
   <div id="loading-screen">
     <img class="thumb"
-      src="https://os-worker.unityroom.com/unityroom_production/icon/298420/icon_20260518_124606.gif?h=1779075966"
-      alt="END CREDITS" onerror="this.style.display='none'">
-    <h2>END CREDITS</h2>
-    <div class="subtitle">8番出口ライク ホラー探索ゲーム</div>
+      src="https://os-worker.unityroom.com/unityroom_production/icon/172303/icon_20250623_192021.png?h=1750674021"
+      alt="第9病棟" onerror="this.style.display='none'">
+    <h2>第9病棟</h2>
+    <div class="subtitle">hospital corridor horror game</div>
     <div class="progress-wrap"><div class="progress-fill" id="pf"></div></div>
     <div class="pct" id="pct">0%</div>
     <div class="cdn-label" id="cdn-label">接続中...</div>
@@ -70,8 +68,8 @@
   </div>
   <script>
   (function () {
-    var CDN = "https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/end-credits/webgl";
-    var RAW = "https://raw.githubusercontent.com/kuru-bana/Games/main/end-credits/webgl";
+    var CDN = "https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Unity/hospital-9th/webgl";
+    var RAW = "https://raw.githubusercontent.com/kuru-bana/Games/main/Unity/hospital-9th/webgl";
 
     var pfEl     = document.getElementById("pf");
     var pctEl    = document.getElementById("pct");
@@ -107,7 +105,7 @@
         codeUrl:            RAW + "/webgl.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName:        "empty",
-        productName:        "END CREDITS",
+        productName:        "第9病棟",
         productVersion:     "0"
       };
       cdnLabel.textContent = "ゲームデータを読み込み中...";
