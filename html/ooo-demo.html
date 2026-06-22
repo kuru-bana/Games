@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta charset="utf-8"/>
+    <title>Ãoo</title>
+    <style>
+        body { background: #000; color: #ccc; margin: 0; padding: 0; }
+        canvas {
+            image-rendering: optimizeSpeed;
+            -webkit-interpolation-mode: nearest-neighbor;
+            -ms-touch-action: none;
+            touch-action: none;
+            margin: 0; padding: 0; border: 0;
+        }
+        div.gm4html5_div_class { margin: 0; padding: 0; border: 0; }
+    </style>
+    <script>
+    (function() {
+        var SHA = '5fbc517e98f74cd242b2b3950ea91b1d117eea9a';
+        var CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@' + SHA + '/%C3%96oo-demo/';
+
+        function needsCDN(url) {
+            if (typeof url !== 'string' || url === '') return false;
+            if (url.indexOf('http://') === 0) return false;
+            if (url.indexOf('https://') === 0) return false;
+            if (url.indexOf('data:') === 0) return false;
+            if (url.indexOf('blob:') === 0) return false;
+            if (url.indexOf('/') === 0) return false;
+            return true;
+        }
+
+        function isDatFile(url) {
+            return typeof url === 'string' && url.indexOf('.dat') !== -1;
+        }
+
+        // Patch Image src (textures) with CORS fix
+        var imgDesc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+        if (imgDesc && imgDesc.set) {
+            Object.defineProperty(HTMLImageElement.prototype, 'src', {
+                set: function(v) {
+                    if (needsCDN(v)) {
+                        this.crossOrigin = 'anonymous';
+                        imgDesc.set.call(this, CDN + v);
+                    } else if (v && (v.indexOf('https://') === 0 || v.indexOf('http://') === 0)) {
+                        this.crossOrigin = 'anonymous';
+                        imgDesc.set.call(this, v);
+                    } else {
+                        imgDesc.set.call(this, v);
+                    }
+                },
+                get: imgDesc.get, configurable: true
+            });
+        }
+
+        // Patch fetch â redirect to CDN, swallow .dat failures silently
+        if (window.fetch) {
+            var origFetch = window.fetch.bind(window);
+            window.fetch = function(url, opts) {
+                if (typeof url === 'string' && needsCDN(url)) url = CDN + url;
+                return origFetch(url, opts).catch(function(e) {
+                    if (isDatFile(String(url))) return new Response(new ArrayBuffer(0));
+                    throw e;
+                });
+            };
+        }
+
+        // Patch XMLHttpRequest â redirect to CDN; for .dat errors return silent empty response
+        var origOpen = XMLHttpRequest.prototype.open;
+        var origSend = XMLHttpRequest.prototype.send;
+
+        XMLHttpRequest.prototype.open = function(method, url) {
+            if (typeof url === 'string' && needsCDN(url)) {
+                this._isDat = isDatFile(url);
+                arguments[1] = CDN + url;
+            } else {
+                this._isDat = isDatFile(String(url || ''));
+            }
+            return origOpen.apply(this, arguments);
+        };
+
+        XMLHttpRequest.prototype.send = function() {
+            if (this._isDat) {
+                var self = this;
+                var origOnError = this.onerror;
+                this.onerror = function(e) {
+                    // Fake empty 200 so game falls back to individual OGG loading
+                    Object.defineProperty(self, 'status', { get: function() { return 200; }, configurable: true });
+                    Object.defineProperty(self, 'response', { get: function() { return new ArrayBuffer(0); }, configurable: true });
+                    if (self.onload) self.onload.call(self, e);
+                };
+            }
+            return origSend.apply(this, arguments);
+        };
+
+        // Patch AudioContext.decodeAudioData â silently skip empty/detached buffers
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) {
+            var origDecode = AC.prototype.decodeAudioData;
+            AC.prototype.decodeAudioData = function(buffer, success, error) {
+                try {
+                    if (!buffer || buffer.byteLength === 0) {
+                        var err = new DOMException('empty buffer', 'EncodingError');
+                        if (error) error(err);
+                        return Promise.reject(err).catch(function(){});
+                    }
+                    var p = origDecode.call(this, buffer, success, error);
+                    if (p && p.catch) p = p.catch(function(){});
+                    return p;
+                } catch(e) {
+                    if (error) error(e);
+                    return Promise.reject(e).catch(function(){});
+                }
+            };
+        }
+    })();
+    </script>
+</head>
+<body>
+    <div class="gm4html5_div_class" id="gm4html5_div_id">
+        <canvas id="canvas" width="960" height="720"
+            style="position:absolute;top:50%;left:50%;bottom:-50%;right:-50%;transform:translate(-50%,-50%);">
+            <p>Your browser doesn't support HTML5 canvas.</p>
+        </canvas>
+    </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@5fbc517e98f74cd242b2b3950ea91b1d117eea9a/%C3%96oo-demo/Ooo/BOMBWAY.js"></script>
+    <script>window.onload = GameMaker_Init;</script>
+</body>
+</html>
