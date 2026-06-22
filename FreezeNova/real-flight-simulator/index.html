@@ -37,7 +37,7 @@
   <div class="pct" id="pct">0%</div>
 </div>
 <div id="gameContainer"></div>
-<script src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/real-flight-simulator/Build/UnityLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/FreezeNova/real-flight-simulator/Build/UnityLoader.js"></script>
 <script>
 (function () {
   var statusEl  = document.getElementById('status');
@@ -53,7 +53,7 @@
     if (progress === 1) { statusEl.style.display = 'none'; }
   }
 
-  var BASE = 'https://raw.githubusercontent.com/kuru-bana/End-CREDITS/main/real-flight-simulator/Build/';
+  var BASE = 'https://raw.githubusercontent.com/kuru-bana/Games/main/FreezeNova/real-flight-simulator/Build/';
   UnityLoader.instantiate('gameContainer', BASE + 'game.json', { onProgress: UnityProgress });
 })();
 </script>
