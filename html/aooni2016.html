@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="user-scalable=no">
+        <link rel="icon" href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/icon/icon.png" type="image/png">
+        <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/icon/icon.png">
+        <title>éé¬¼2016</title>
+        <meta name="description" content="é¤¨ã«éãè¾¼ããããä¸­å­¦çéãåç©ããéãã¤ã¤è±åºãè©¦ã¿ã">
+        <style>
+            body { background-color: black; margin: 0; }
+            @font-face {
+                font-family: GameFontAooni;
+                src: url("https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/fonts/mplus-1m-regular.ttf");
+            }
+        </style>
+        <script>
+        (function() {
+            var CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/';
+
+            function needsCDN(url) {
+                if (typeof url !== 'string' || url === '') return false;
+                if (url.indexOf('http://') === 0) return false;
+                if (url.indexOf('https://') === 0) return false;
+                if (url.indexOf('data:') === 0) return false;
+                if (url.indexOf('blob:') === 0) return false;
+                if (url.indexOf('javascript:') === 0) return false;
+                if (url.indexOf('/') === 0) return false;
+                return true;
+            }
+
+            // Patch XMLHttpRequest
+            var origOpen = XMLHttpRequest.prototype.open;
+            XMLHttpRequest.prototype.open = function(method, url) {
+                if (needsCDN(url)) arguments[1] = CDN + url;
+                return origOpen.apply(this, arguments);
+            };
+
+            // Patch Image src â must set crossOrigin='anonymous' BEFORE src
+            // to avoid WebGL "tainted canvas" SecurityError
+            var imgDesc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+            if (imgDesc && imgDesc.set) {
+                Object.defineProperty(HTMLImageElement.prototype, 'src', {
+                    set: function(v) {
+                        if (needsCDN(v)) {
+                            this.crossOrigin = 'anonymous';
+                            imgDesc.set.call(this, CDN + v);
+                        } else if (v && v.indexOf('https://') === 0) {
+                            this.crossOrigin = 'anonymous';
+                            imgDesc.set.call(this, v);
+                        } else {
+                            imgDesc.set.call(this, v);
+                        }
+                    },
+                    get: imgDesc.get, configurable: true
+                });
+            }
+
+            // Patch Script src (for dynamic plugin loading by PluginManager)
+            var scriptDesc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
+            if (scriptDesc && scriptDesc.set) {
+                Object.defineProperty(HTMLScriptElement.prototype, 'src', {
+                    set: function(v) { scriptDesc.set.call(this, needsCDN(v) ? CDN + v : v); },
+                    get: scriptDesc.get, configurable: true
+                });
+            }
+
+            // Patch fetch
+            if (window.fetch) {
+                var origFetch = window.fetch.bind(window);
+                window.fetch = function(url, opts) {
+                    if (needsCDN(url)) url = CDN + url;
+                    return origFetch(url, opts);
+                };
+            }
+
+            // Patch Audio src
+            var audioProto = HTMLAudioElement.prototype;
+            var audioDesc = Object.getOwnPropertyDescriptor(audioProto, 'src')
+                || Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'src');
+            if (audioDesc && audioDesc.set) {
+                Object.defineProperty(audioProto, 'src', {
+                    set: function(v) { audioDesc.set.call(this, needsCDN(v) ? CDN + v : v); },
+                    get: audioDesc.get, configurable: true
+                });
+            }
+        })();
+        </script>
+    </head>
+    <body style="background-color: black">
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/pixi.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/pixi-tilemap.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/pixi-picture.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/fpsmeter.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/lz-string.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_core.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_managers.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_objects.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_scenes.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_sprites.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_windows.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/plugins.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/main.js"></script>
+    </body>
+</html>
