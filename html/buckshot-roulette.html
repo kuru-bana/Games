@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buckshot Roulette</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; background: #0a0a0a; overflow: hidden; }
+    body { display: flex; align-items: center; justify-content: center; }
+    #status {
+      position: fixed; inset: 0; background: #0a0a0a;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 16px; z-index: 100;
+    }
+    #status h2 {
+      font-family: "Courier New", monospace; font-size: 20px; letter-spacing: 6px;
+      color: #b8a020; text-shadow: 0 0 16px #b8a02099;
+    }
+    #status .sub {
+      font-family: "Courier New", monospace; font-size: 11px; color: #444; letter-spacing: 2px;
+    }
+    #status .bar-wrap {
+      width: 260px; height: 4px; background: #1a1a00; border-radius: 2px; overflow: hidden;
+    }
+    #status .bar-fill {
+      height: 100%; background: linear-gradient(90deg, #7a6a00, #b8a020);
+      width: 0%; transition: width 0.3s;
+    }
+    #status .pct { font-family: "Courier New", monospace; color: #7a6a00; font-size: 12px; }
+    canvas#canvas { display: block; width: 100vw; height: 100vh; }
+  </style>
+</head>
+<body>
+<div id="status">
+  <img src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/SOXR/buckshot-roulette/game/index.png"
+       style="width:200px;height:200px;object-fit:contain;border-radius:8px;"
+       onerror="this.style.display='none'">
+  <h2>BUCKSHOT ROULETTE</h2>
+  <div class="sub" id="statusText">Loading engine...</div>
+  <div class="bar-wrap"><div class="bar-fill" id="barFill"></div></div>
+  <div class="pct" id="pct">0%</div>
+</div>
+<canvas id="canvas"></canvas>
+
+<script>
+(function () {
+  var NOISE = [
+    'Invalid comment in Ogg Vorbis',
+    'maybe_update_info',
+    'audio_stream_ogg_vorbis',
+    'GDScript backtrace',
+    'most recent call first',
+    'MenuManager.gd',
+    'onPrintError',
+    'user does not have save file',
+    'adjusting settings in scene',
+    'running openGL',
+    'user entered scene',
+    'Failed to create PositionWorklet',
+    'Unable to load a worklet',
+    'ServiceWorkerRegistration',
+    'invalid state',
+    '_godot_js_pwa',
+    'PositionWorklet',
+  ];
+  function isNoise(args) {
+    return args.some(function(a) {
+      var s = (typeof a === 'string') ? a : (a && a.message ? a.message : '');
+      if (!s) return false;
+      return NOISE.some(function(n) { return s.toLowerCase().indexOf(n.toLowerCase()) !== -1; });
+    });
+  }
+  var _log   = console.log.bind(console);
+  var _warn  = console.warn.bind(console);
+  var _error = console.error.bind(console);
+  console.log   = function() { if (!isNoise([].slice.call(arguments))) _log.apply(console, arguments); };
+  console.warn  = function() { if (!isNoise([].slice.call(arguments))) _warn.apply(console, arguments); };
+  console.error = function() { if (!isNoise([].slice.call(arguments))) _error.apply(console, arguments); };
+
+  window.addEventListener('unhandledrejection', function(e) {
+    var msg = (e.reason && e.reason.message) ? e.reason.message : String(e.reason);
+    if (isNoise([msg])) { e.preventDefault(); }
+  });
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/SOXR/buckshot-roulette/game/index.js"></script>
+<script>
+(async function () {
+  var statusEl  = document.getElementById('status');
+  var statusTxt = document.getElementById('statusText');
+  var barFill   = document.getElementById('barFill');
+  var pctEl     = document.getElementById('pct');
+
+  function hideStatus() { statusEl.style.display = 'none'; }
+  function setProgress(cur, total, label) {
+    var pct = total > 0 ? Math.round(cur / total * 100) : 0;
+    barFill.style.width = pct + '%';
+    pctEl.textContent   = pct + '%';
+    if (label) statusTxt.textContent = label;
+  }
+
+  try {
+    var canvas = document.getElementById('canvas');
+    var GODOT_CONFIG = {
+      'args': [],
+      'canvasResizePolicy': 2,
+      'emscriptenPoolSize': 8,
+      'ensureCrossOriginIsolationHeaders': false,
+      'executable': 'https://raw.githubusercontent.com/kuru-bana/Games/main/SOXR/buckshot-roulette/game/index',
+      'mainPack': 'https://dl.dropboxusercontent.com/scl/fi/4oeb3jdrkjxz4n7mg5kx9/index.pck?rlkey=9yd957d5i061qt2dae9dgfz40&st=dzy938d4',
+      'experimentalVK': false,
+      'fileSizes': { 'index.pck': 386338968, 'index.wasm': 36145869 },
+      'focusCanvas': true,
+      'gdextensionLibs': [],
+      'godotPoolSize': 4,
+      'print': function(msg) {
+        var noise = ['Invalid comment in Ogg Vorbis', 'GDScript backtrace', 'MenuManager', 'adjusting settings', 'running openGL', 'user entered scene', 'user does not have save'];
+        if (noise.some(function(n) { return msg && msg.indexOf(n) !== -1; })) return;
+        console.log('[Godot]', msg);
+      },
+      'printErr': function(msg) {
+        var noise = ['Invalid comment in Ogg Vorbis', 'GDScript backtrace', 'MenuManager', 'audio_stream_ogg_vorbis', 'maybe_update_info'];
+        if (noise.some(function(n) { return msg && msg.indexOf(n) !== -1; })) return;
+        console.warn('[Godot]', msg);
+      }
+    };
+    var engine = new Engine(GODOT_CONFIG);
+    statusTxt.textContent = 'Starting game...';
+    await engine.startGame({
+      canvas: canvas,
+      onProgress: function (current, total) {
+        setProgress(current, total, 'Loading game data...');
+      }
+    });
+    hideStatus();
+  } catch (e) {
+    statusTxt.textContent = 'Error: ' + (e.message || String(e));
+    barFill.style.background = '#cc0000';
+  }
+})();
+</script>
+</body>
+</html>
