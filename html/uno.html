@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UNO Online</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; background: #191f26; overflow: hidden; }
+    body { display: flex; align-items: center; justify-content: center; }
+    #status {
+      position: fixed; inset: 0; background: #191f26;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 14px; z-index: 100;
+    }
+    #status h2 {
+      font-family: "Courier New", monospace; font-size: 22px;
+      letter-spacing: 5px; color: #e53935; text-shadow: 0 0 12px #e5393566;
+    }
+    #status .sub { font-family: "Courier New", monospace; font-size: 11px; color: #555; letter-spacing: 2px; }
+    #status .bar-wrap { width: 260px; height: 4px; background: #2a0a0a; border-radius: 2px; overflow: hidden; }
+    #status .bar-fill { height: 100%; background: linear-gradient(90deg, #8b0000, #e53935); width: 0%; transition: width 0.3s; }
+    #status .pct { font-family: "Courier New", monospace; color: #b71c1c; font-size: 12px; }
+    #gameContainer {
+      width: 100vw; height: 100vh;
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+<div id="status">
+  <h2>UNO ONLINE</h2>
+  <div class="sub" id="statusText">Loading...</div>
+  <div class="bar-wrap"><div class="bar-fill" id="barFill"></div></div>
+  <div class="pct" id="pct">0%</div>
+</div>
+<div id="gameContainer"></div>
+<script>
+(function () {
+  var NOISE = ['FreezeNovaAPI', 'ForceToShowRealAd', 'MissingMethodException', 'UnloadTime', 'Unloading', 'MarkObjects'];
+  function isNoise(args) {
+    return args.some(function(a) {
+      var s = typeof a === 'string' ? a : (a && a.message ? a.message : '');
+      return NOISE.some(function(n) { return s.indexOf(n) !== -1; });
+    });
+  }
+  var _log = console.log.bind(console), _warn = console.warn.bind(console), _error = console.error.bind(console);
+  console.log   = function() { if (!isNoise([].slice.call(arguments))) _log.apply(console, arguments); };
+  console.warn  = function() { if (!isNoise([].slice.call(arguments))) _warn.apply(console, arguments); };
+  console.error = function() { if (!isNoise([].slice.call(arguments))) _error.apply(console, arguments); };
+  window.addEventListener('unhandledrejection', function(e) {
+    var msg = e.reason && e.reason.message ? e.reason.message : String(e.reason);
+    if (isNoise([msg])) e.preventDefault();
+  });
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/FreezeNova/uno/Build/UnityLoader.js"></script>
+<script>
+(function () {
+  var statusEl  = document.getElementById('status');
+  var statusTxt = document.getElementById('statusText');
+  var barFill   = document.getElementById('barFill');
+  var pctEl     = document.getElementById('pct');
+
+  function UnityProgress(gameInstance, progress) {
+    var pct = Math.round(progress * 100);
+    barFill.style.width = pct + '%';
+    pctEl.textContent   = pct + '%';
+    statusTxt.textContent = 'Loading... ' + pct + '%';
+    if (progress === 1) { statusEl.style.display = 'none'; }
+  }
+
+  var BASE = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/FreezeNova/uno/Build/';
+  UnityLoader.instantiate('gameContainer', BASE + 'game.json', { onProgress: UnityProgress });
+})();
+</script>
+</body>
+</html>
