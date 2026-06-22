@@ -59,11 +59,11 @@
 <canvas id="canvas" class="fullscreen"></canvas>
 <div id="banner-container" style="display: none"></div>
 <div id="loading-overlay" class="fullscreen">
-<img id="icon" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Battle_Star/icon.png"/>
+<img id="icon" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Yandex/Battle_Star/icon.png"/>
 <div id="progress-bar"><div id="progress-bar-fill"></div></div>
 </div>
-<script src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Battle_Star/add/howler.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Battle_Star/playgama-bridge.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Yandex/Battle_Star/add/howler.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Yandex/Battle_Star/playgama-bridge.js"></script>
 <script>
             if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
                 let meta = document.createElement('meta')
@@ -161,15 +161,15 @@
                     }
 
                     let unityLoader = document.createElement('script')
-                    unityLoader.src = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Battle_Star/Build/web.loader.js'
+                    unityLoader.src = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Yandex/Battle_Star/Build/web.loader.js'
                     unityLoader.onload = () => {
                         createUnityInstance(
                             canvas,
                             {
-                                dataUrl: 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Battle_Star/Build/web.data.unityweb',
-                                frameworkUrl: 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Battle_Star/Build/web.framework.js.unityweb',
-                                codeUrl: 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Battle_Star/Build/web.wasm.unityweb',
-                                streamingAssetsUrl: 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Battle_Star/StreamingAssets',
+                                dataUrl: 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Yandex/Battle_Star/Build/web.data.unityweb',
+                                frameworkUrl: 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Yandex/Battle_Star/Build/web.framework.js.unityweb',
+                                codeUrl: 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Yandex/Battle_Star/Build/web.wasm.unityweb',
+                                streamingAssetsUrl: 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Yandex/Battle_Star/StreamingAssets',
                                 companyName: 'DefaultCompany',
                                 productName: 'Clicker',
                                 productVersion: '0.1',
@@ -829,7 +829,7 @@
 	var isSound = 1;
 
     sound = new Howl({
-        src: ['https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Battle_Star/silent.mp3']
+        src: ['https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Yandex/Battle_Star/silent.mp3']
     });
 
     sound.play();
