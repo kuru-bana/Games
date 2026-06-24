@@ -3,20 +3,20 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="user-scalable=no">
-        <link rel="icon" href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/icon/icon.png" type="image/png">
-        <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/icon/icon.png">
-        <title>éé¬¼2016</title>
-        <meta name="description" content="é¤¨ã«éãè¾¼ããããä¸­å­¦çéãåç©ããéãã¤ã¤è±åºãè©¦ã¿ã">
+        <link rel="icon" href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/icon/icon.png" type="image/png">
+        <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/icon/icon.png">
+        <title>青鬼2016</title>
+        <meta name="description" content="館に閉じ込められた中学生達が化物から逃げつつ脱出を試みる">
         <style>
             body { background-color: black; margin: 0; }
             @font-face {
                 font-family: GameFontAooni;
-                src: url("https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/fonts/mplus-1m-regular.ttf");
+                src: url("https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/fonts/mplus-1m-regular.ttf");
             }
         </style>
         <script>
         (function() {
-            var CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/';
+            var CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/';
 
             function needsCDN(url) {
                 if (typeof url !== 'string' || url === '') return false;
@@ -36,7 +36,7 @@
                 return origOpen.apply(this, arguments);
             };
 
-            // Patch Image src â must set crossOrigin='anonymous' BEFORE src
+            // Patch Image src — must set crossOrigin='anonymous' BEFORE src
             // to avoid WebGL "tainted canvas" SecurityError
             var imgDesc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
             if (imgDesc && imgDesc.set) {
@@ -88,18 +88,18 @@
         </script>
     </head>
     <body style="background-color: black">
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/pixi.js"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/pixi-tilemap.js"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/pixi-picture.js"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/fpsmeter.js"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/libs/lz-string.js"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_core.js"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_managers.js"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_objects.js"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_scenes.js"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_sprites.js"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/rpg_windows.js"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/plugins.js"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/aooni2016/js/main.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/js/libs/pixi.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/js/libs/pixi-tilemap.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/js/libs/pixi-picture.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/js/libs/fpsmeter.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/js/libs/lz-string.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/js/rpg_core.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/js/rpg_managers.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/js/rpg_objects.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/js/rpg_scenes.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/js/rpg_sprites.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/js/rpg_windows.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/js/plugins.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/aooni2016/js/main.js"></script>
     </body>
 </html>
