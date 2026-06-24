@@ -49,7 +49,7 @@
     onerror="this.style.display='none'">
   <h2>2048</h2>
   <div class="progress-wrap"><div class="progress-fill" id="pf"></div></div>
-  <div class="cdn-label" id="cdn-label">èª­ã¿è¾¼ã¿ä¸­...</div>
+  <div class="cdn-label" id="cdn-label">読み込み中...</div>
 </div>
 
 <div id="gameContainer"></div>
@@ -58,8 +58,8 @@
 (function () {
   var CACHE_VER = "1";
 
-  var JSDELIVR_BASE = "https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/2048";
-  var GHRAW_BASE    = "https://raw.githubusercontent.com/kuru-bana/Games/main/2048";
+  var JSDELIVR_BASE = "https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/2048";
+  var GHRAW_BASE    = "https://raw.githubusercontent.com/kuru-bana/Games/main/Other/2048";
 
   function v(url) { return url + "?v=" + CACHE_VER; }
 
@@ -80,8 +80,8 @@
 
   function showError(msg) {
     loadingEl.innerHTML =
-      '<h2 style="color:#f59563;font-family:sans-serif;">èª­ã¿è¾¼ã¿å¤±æ</h2>' +
-      '<p style="color:#bbada0;font-family:sans-serif;font-size:13px;">' + (msg || 'CDN ã«æ¥ç¶ã§ãã¾ããã§ãã') + '</p>';
+      '<h2 style="color:#f59563;font-family:sans-serif;">読み込み失敗</h2>' +
+      '<p style="color:#bbada0;font-family:sans-serif;font-size:13px;">' + (msg || 'CDN に接続できませんでした') + '</p>';
   }
 
   function setProgress(p) {
@@ -136,7 +136,7 @@
             </div>
           </div>
           <div class="above-game">
-            <p class="game-intro">æ°å­ãåããã¦ <strong>2048</strong> ãç®æããï¼</p>
+            <p class="game-intro">数字を合わせて <strong>2048</strong> を目指そう！</p>
             <a class="restart-button">New Game</a>
           </div>
           <div class="game-container">
@@ -155,18 +155,18 @@
             </div>
             <div class="tile-container"></div>
           </div>
-          <p class="game-explanation"><strong>æä½:</strong> ç¢å°ã­ã¼ã¾ãã¯ã¹ã¯ã¤ãã§ã¿ã¤ã«ãç§»åãåãæ°å­ãåãããã¨åä½ï¼</p>
+          <p class="game-explanation"><strong>操作:</strong> 矢印キーまたはスワイプでタイルを移動。同じ数字が合わさると合体！</p>
         </div>
       </div>`;
   }
 
   function start(base) {
-    cdnLabel.textContent = 'CSS èª­ã¿è¾¼ã¿ä¸­...';
+    cdnLabel.textContent = 'CSS 読み込み中...';
     injectCSS(base, function () {
-      cdnLabel.textContent = 'ã¹ã¯ãªããèª­ã¿è¾¼ã¿ä¸­...';
+      cdnLabel.textContent = 'スクリプト読み込み中...';
       buildGameDOM(base);
       loadScripts(base, JS_FILES, function (failedFile) {
-        if (failedFile) { showError('ãã¡ã¤ã«èª­ã¿è¾¼ã¿å¤±æ: ' + failedFile); return; }
+        if (failedFile) { showError('ファイル読み込み失敗: ' + failedFile); return; }
         showGame();
       });
     });
@@ -176,10 +176,10 @@
     var sources = [JSDELIVR_BASE, GHRAW_BASE];
     var idx = 0;
     function tryNext() {
-      if (idx >= sources.length) { showError('ä¸¡æ¹ã® CDN ã«æ¥ç¶ã§ãã¾ããã§ãã'); return; }
+      if (idx >= sources.length) { showError('両方の CDN に接続できませんでした'); return; }
       var base = sources[idx++];
       var label = base.includes('jsdelivr') ? 'jsDelivr' : 'GitHub Raw';
-      cdnLabel.textContent = label + ' ããèª­ã¿è¾¼ã¿ä¸­...';
+      cdnLabel.textContent = label + ' から読み込み中...';
       var testScript = document.createElement('script');
       testScript.src = v(base + '/js/bind_polyfill.js');
       testScript.onload = function () { start(base); };
