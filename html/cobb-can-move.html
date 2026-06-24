@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>COBB CAN MOVE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-    <!-- <base> ã¿ã°: å¨ã¦ã®ç¸å¯¾URLãCDNã«åãã (fetch/importå«ã) -->
-    <base href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/COBB-CAN-MOVE/">
+    <!-- <base> タグ: 全ての相対URLをCDNに向ける (fetch/import含む) -->
+    <base href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/COBB-CAN-MOVE/">
     <style>
   html, body {
 	padding: 0;
@@ -102,7 +102,7 @@ html[ioswebview] .c3htmlwrap > * {
 }
 
 .bbCodeItem::before {
-	content: " â¢ ";
+	content: " • ";
 }
 
 /* For text icons converted to HTML: size the height to the line height
@@ -127,24 +127,24 @@ html[ioswebview] .c3htmlwrap > * {
   <body>
 
   <script>
-  // CDNå®æ°
-  const CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/COBB-CAN-MOVE/';
+  // CDN定数
+  const CDN = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/COBB-CAN-MOVE/';
 
-  // fetch ã¤ã³ã¿ã¼ã»ããï¼ç¸å¯¾URLã»åãªãªã¸ã³URLãå¨ã¦CDNã¸ï¼
+  // fetch インターセプト（相対URL・同オリジンURLを全てCDNへ）
   const _origFetch = window.fetch;
   window.fetch = function(input, init) {
     let url = typeof input === 'string' ? input : (input && input.url ? input.url : String(input));
-    // ç¸å¯¾URL â CDN
+    // 相対URL → CDN
     if (!/^(https?:|blob:|data:|//)/.test(url)) {
       url = CDN + url.replace(/^\//, '');
       input = url;
     }
-    // åãªãªã¸ã³çµ¶å¯¾URL â CDN ã«è»¢é
+    // 同オリジン絶対URL → CDN に転送
     else if (url.startsWith('http') && !url.startsWith(CDN) && !url.includes('cdn.jsdelivr.net')) {
       try {
         const u = new URL(url);
         if (u.origin === location.origin) {
-          // pathããã²ã¼ã ãã¡ã¤ã«ãæ½åº
+          // pathからゲームファイルを抽出
           const path = u.pathname.replace(/^\//, '');
           input = CDN + path;
         }
@@ -153,7 +153,7 @@ html[ioswebview] .c3htmlwrap > * {
     return init !== undefined ? _origFetch.call(window, input, init) : _origFetch.call(window, input);
   };
 
-  // XHR ã¤ã³ã¿ã¼ã»ãã
+  // XHR インターセプト
   const _XHROpen = XMLHttpRequest.prototype.open;
   XMLHttpRequest.prototype.open = function(method, url, ...rest) {
     if (typeof url === 'string' && !/^(https?:|blob:|data:|//)/.test(url)) {
@@ -162,7 +162,7 @@ html[ioswebview] .c3htmlwrap > * {
     return _XHROpen.call(this, method, url, ...rest);
   };
 
-  // Worker postMessage ã¤ã³ã¿ã¼ã»ãã (runtimeBaseUrl â CDN)
+  // Worker postMessage インターセプト (runtimeBaseUrl → CDN)
   const _Worker = window.Worker;
   window.Worker = function(url, opts) {
     const w = new _Worker(url, opts);
@@ -182,7 +182,7 @@ html[ioswebview] .c3htmlwrap > * {
   "use strict";!function(){let p=!0;"pass"!==(new class{#p="pass";getProp(){return this.#p}}).getProp()&&(p=!1),p&&(window["C3_ModernJSSupport_OK"]=!0)}();
   </script>
   <script>
-  "use strict";!function(){var e={"en-US":{"title":"Software update needed","message":"This content is not supported because your device's software appears to be out-of-date.","android-tip":"On Android, fix this by making sure the [a1]Android System Webview[/a1] app has updates enabled and is up-to-date.","ios-tip":"Alternatively if [b]Lockdown mode[/b] is enabled, try turning it off to view this content.","general-tip":"Try installing any available software updates. Alternatively try on a different device."},"es-ES":{"title":"ActualizaciÃ³n de software necesaria","message":"Este contenido no es compatible porque el software de tu dispositivo parece no estar actualizado.","android-tip":"En Android, para solucionarlo, asegÃºrate de que la aplicaciÃ³n [a1]Android System Webview[/a1] tiene las actualizaciones activadas y estÃ¡ al dÃ­a.","ios-tip":"Alternativamente, si el [b]Modo de bloqueo[/b] estÃ¡ activado, intenta desactivarlo para ver este contenido.","general-tip":"Intenta instalar las actualizaciones de software disponibles. TambiÃ©n puedes probar con otro dispositivo."},"hr-HR":{"title":"Potrebno aÅ¾uriranje softvera","message":"Ovaj sadrÅ¾aj nije podrÅ¾an jer softver vaÅ¡eg ureÄaja zastario.","android-tip":"Na Androidu, popravite to na naÄin da provjerite ima li [a1]Android System Webview[/a1] aplikacija ukljuÄena aÅ¾uriranja i je aÅ¾urna.","ios-tip":"Alternativno ako je ukljuÄen [b]Lockdown mod[/b], pokuÅ¡ajte ga ugasiti kako bi vidjeli ovaj sadrÅ¾aj.","general-tip":"PokuÅ¡ajte instalirati dostupna softverska aÅ¾uriranja. Alternativno, probajte na drugom ureÄaju."},"pt-BR":{"title":"AtualizaÃ§Ã£o de software necessÃ¡ria","message":"Esse conteÃºdo nÃ£o Ã© suportado porque o software do seu dispositivo parece estar desatualizado.","android-tip":"No Android, Ã© possÃ­vel consertar esse erro certificando-se de que o aplicativo [a1]Android System Webview[/a1] tem atualizaÃ§Ãµes habilitadas e estÃ¡ na versÃ£o mais recente.","ios-tip":"De outro modo, se o [b]Modo Lockdown[/b] estÃ¡ ativo, tente desligÃ¡-lo para poder ver o conteÃºdo.","general-tip":"Tente instalar qualquer atualizaÃ§Ã£o de software disponÃ­vel. De outro modo, tente em um dispositivo diferente."},"zh-CN":{"title":"è½¯ä»¶éè¦æ´æ°","message":"ç±äºæ¨è®¾å¤ä¸çè½¯ä»¶çæ¬è¿ä½ï¼ææ¶æ æ³è¿è¡æ­¤åå®¹ã","android-tip":"å¨å®åç³»ç»ä¸ï¼è¦è§£å³è¿ä¸ªé®é¢ï¼è¯·ç¡®ä¿ [a1]Android System Webview[/a1] åºç¨ç¨åºå·²å¯ç¨èªå¨æ´æ°å¹¶å¤äºææ°ç¶æã","ios-tip":"å¦ææ¨çè®¾å¤å¤äº[b]éå®æ¨¡å¼[/b]ï¼è¯·å¨ç³»ç»è®¾ç½® - éç§ä¸å®å¨æ§ï¼å³é­éå®æ¨¡å¼åæ¬¡å°è¯ã","general-tip":"è¯·å°è¯æ´æ°ç³»ç»çæ¬ï¼æèæ´æ¢å¦ä¸å°è®¾å¤è¿è¡ã"},"zh-TW":{"title":"è»é«éè¦æ´æ°","message":"ç±æ¼æ¨çè£ç½®è»é«ä¼¼ä¹å·²éæï¼å æ­¤ä¸æ¯æ´æ­¤å§å®¹ã","android-tip":"å¨ Android ä¸ï¼è¦è§£æ±ºæ­¤åé¡ï¼è«ç¢ºä¿ [a1]Android System Webview[/a1] å·²åç¨æ´æ°ä¸¦ä¸æ¯ææ°çæ¬ã","ios-tip":"å¦å¤ï¼å¦ææ¨çè£ç½®å·²åç¨ [b]å°éæ¨¡å¼[/b]ï¼è«åè©¦ééä»¥æª¢è¦æ­¤å§å®¹ã","general-tip":"åè©¦æ´æ°è»é«ï¼æèåè©¦å¨ä¸åçè£ç½®ä¸å·è¡ã"}},a=navigator.languages||[navigator.language],t=function(a){var t=a.toLowerCase();for(var i in e){var o=i.toLowerCase();if(t.startsWith(o))return e[i];var n=t.split("-"),r=o.split("-");if(n[0]===r[0]&&"zh"!==n[0])return e[i]}return null},i=null;for(var o of a)if(i=t(o))break;i||(i=e["en-US"]);var n=function(e,a){var t=i[e];return t=(t=t.replace("[b]","<strong>")).replace("[/b]","</strong>"),a&&(t=(t=t.replace("[a1]",'<a href="'+a+'">')).replace("[/a1]","</a>")),t},r=[];if(!!document.createElement("canvas").getContext("webgl")||r.push("WebGL"),"undefined"==typeof WebAssembly&&r.push("WebAssembly"),window["Intl"]&&window["Intl"]["Segmenter"]||r.push("Internationalization support (Intl.Segmenter)"),window["C3_ModernJSSupport_OK"]||r.push("Modern JavaScript support"),0===r.length)window["C3_IsSupported"]=!0;else{var s=document.createElement("div");s.id="notSupportedWrap",document.body.appendChild(s);var d=document.createElement("h2");d.id="notSupportedTitle",d.textContent=n("title"),s.appendChild(d);var p=document.createElement("p");p.className="notSupportedMessage";var l=n("message"),u=navigator.userAgent;/android/i.test(u)?l+="<br><br>"+n("android-tip","https://play.google.com/store/apps/details?id=com.google.android.webview"):/iphone|ipad|ipod/i.test(u)?l+=" "+n("ios-tip"):l+=" "+n("general-tip"),l+="<br><br><em>Missing features: "+r.join(", ")+"<br>User agent: "+navigator.userAgent+"</em>",p.innerHTML=l,s.appendChild(p),document.addEventListener("deviceready",()=>{navigator["splashscreen"]&&navigator["splashscreen"]["hide"]&&navigator["splashscreen"]["hide"]()})}}();
+  "use strict";!function(){var e={"en-US":{"title":"Software update needed","message":"This content is not supported because your device's software appears to be out-of-date.","android-tip":"On Android, fix this by making sure the [a1]Android System Webview[/a1] app has updates enabled and is up-to-date.","ios-tip":"Alternatively if [b]Lockdown mode[/b] is enabled, try turning it off to view this content.","general-tip":"Try installing any available software updates. Alternatively try on a different device."},"es-ES":{"title":"Actualización de software necesaria","message":"Este contenido no es compatible porque el software de tu dispositivo parece no estar actualizado.","android-tip":"En Android, para solucionarlo, asegúrate de que la aplicación [a1]Android System Webview[/a1] tiene las actualizaciones activadas y está al día.","ios-tip":"Alternativamente, si el [b]Modo de bloqueo[/b] está activado, intenta desactivarlo para ver este contenido.","general-tip":"Intenta instalar las actualizaciones de software disponibles. También puedes probar con otro dispositivo."},"hr-HR":{"title":"Potrebno ažuriranje softvera","message":"Ovaj sadržaj nije podržan jer softver vašeg uređaja zastario.","android-tip":"Na Androidu, popravite to na način da provjerite ima li [a1]Android System Webview[/a1] aplikacija uključena ažuriranja i je ažurna.","ios-tip":"Alternativno ako je uključen [b]Lockdown mod[/b], pokušajte ga ugasiti kako bi vidjeli ovaj sadržaj.","general-tip":"Pokušajte instalirati dostupna softverska ažuriranja. Alternativno, probajte na drugom uređaju."},"pt-BR":{"title":"Atualização de software necessária","message":"Esse conteúdo não é suportado porque o software do seu dispositivo parece estar desatualizado.","android-tip":"No Android, é possível consertar esse erro certificando-se de que o aplicativo [a1]Android System Webview[/a1] tem atualizações habilitadas e está na versão mais recente.","ios-tip":"De outro modo, se o [b]Modo Lockdown[/b] está ativo, tente desligá-lo para poder ver o conteúdo.","general-tip":"Tente instalar qualquer atualização de software disponível. De outro modo, tente em um dispositivo diferente."},"zh-CN":{"title":"软件需要更新","message":"由于您设备上的软件版本过低，暂时无法运行此内容。","android-tip":"在安卓系统上，要解决这个问题，请确保 [a1]Android System Webview[/a1] 应用程序已启用自动更新并处于最新状态。","ios-tip":"如果您的设备处于[b]锁定模式[/b]，请在系统设置 - 隐私与安全性，关闭锁定模式再次尝试。","general-tip":"请尝试更新系统版本，或者更换另一台设备运行。"},"zh-TW":{"title":"軟體需要更新","message":"由於您的裝置軟體似乎已過時，因此不支援此內容。","android-tip":"在 Android 上，要解決此問題，請確保 [a1]Android System Webview[/a1] 已啟用更新並且是最新版本。","ios-tip":"另外，如果您的裝置已啟用 [b]封鎖模式[/b]，請嘗試關閉以檢視此內容。","general-tip":"嘗試更新軟體，或者嘗試在不同的裝置上執行。"}},a=navigator.languages||[navigator.language],t=function(a){var t=a.toLowerCase();for(var i in e){var o=i.toLowerCase();if(t.startsWith(o))return e[i];var n=t.split("-"),r=o.split("-");if(n[0]===r[0]&&"zh"!==n[0])return e[i]}return null},i=null;for(var o of a)if(i=t(o))break;i||(i=e["en-US"]);var n=function(e,a){var t=i[e];return t=(t=t.replace("[b]","<strong>")).replace("[/b]","</strong>"),a&&(t=(t=t.replace("[a1]",'<a href="'+a+'">')).replace("[/a1]","</a>")),t},r=[];if(!!document.createElement("canvas").getContext("webgl")||r.push("WebGL"),"undefined"==typeof WebAssembly&&r.push("WebAssembly"),window["Intl"]&&window["Intl"]["Segmenter"]||r.push("Internationalization support (Intl.Segmenter)"),window["C3_ModernJSSupport_OK"]||r.push("Modern JavaScript support"),0===r.length)window["C3_IsSupported"]=!0;else{var s=document.createElement("div");s.id="notSupportedWrap",document.body.appendChild(s);var d=document.createElement("h2");d.id="notSupportedTitle",d.textContent=n("title"),s.appendChild(d);var p=document.createElement("p");p.className="notSupportedMessage";var l=n("message"),u=navigator.userAgent;/android/i.test(u)?l+="<br><br>"+n("android-tip","https://play.google.com/store/apps/details?id=com.google.android.webview"):/iphone|ipad|ipod/i.test(u)?l+=" "+n("ios-tip"):l+=" "+n("general-tip"),l+="<br><br><em>Missing features: "+r.join(", ")+"<br>User agent: "+navigator.userAgent+"</em>",p.innerHTML=l,s.appendChild(p),document.addEventListener("deviceready",()=>{navigator["splashscreen"]&&navigator["splashscreen"]["hide"]&&navigator["splashscreen"]["hide"]()})}}();
   </script>
   <script type="module">
   "use strict";{class s{constructor(){this._broadcastChannel="undefined"==typeof BroadcastChannel?null:new BroadcastChannel("offline"),this._queuedMessages=[],this._onMessageCallback=null,this._broadcastChannel&&(this._broadcastChannel.onmessage=s=>this._OnBroadcastChannelMessage(s))}_OnBroadcastChannelMessage(s){this._onMessageCallback?this._onMessageCallback(s):this._queuedMessages.push(s)}SetMessageCallback(s){this._onMessageCallback=s;for(let s of this._queuedMessages)this._onMessageCallback(s);this._queuedMessages.length=0}}window.OfflineClientInfo=new s}
@@ -252,7 +252,7 @@ html[ioswebview] .c3htmlwrap > * {
 "use strict";{const e="text-input";function t(e){e.stopPropagation()}function n(e){13!==e.which&&27!==e.which&&e.stopPropagation()}const s=class extends self.DOMElementHandler{constructor(t){super(t,e),this.AddDOMElementMessageHandler("scroll-to-bottom",e=>this._OnScrollToBottom(e))}CreateElement(e,s){let o;const a=s["type"];return"textarea"===a?(o=document.createElement("textarea"),o.style.resize="none"):(o=document.createElement("input"),o.type=a),o.style.position="absolute",o.autocomplete="off",o.addEventListener("pointerdown",t),o.addEventListener("pointerrawupdate",t),o.addEventListener("pointerup",t),o.addEventListener("mousedown",t),o.addEventListener("mouseup",t),o.addEventListener("keydown",n),o.addEventListener("keyup",n),o.addEventListener("click",t=>{t.stopPropagation(),this._PostToRuntimeElementMaybeSync("click",e)}),o.addEventListener("dblclick",t=>{t.stopPropagation(),this._PostToRuntimeElementMaybeSync("dblclick",e)}),o.addEventListener("input",()=>this.PostToRuntimeElement("change",e,{"text":o.value})),s["id"]&&(o.id=s["id"]),s["className"]&&(o.className=s["className"]),this.UpdateState(o,s),o}UpdateState(e,t){e.value=t["text"],e.placeholder=t["placeholder"],e.title=t["title"],e.disabled=!t["isEnabled"],e.readOnly=t["isReadOnly"],e.spellcheck=t["spellCheck"];const n=t["maxLength"];n<0?e.removeAttribute("maxlength"):e.setAttribute("maxlength",n)}_OnScrollToBottom(e){e.scrollTop=e.scrollHeight}};self.RuntimeInterface.AddDOMHandlerClass(s)}
 
 // start-export.js
-"use strict";if(window["C3_IsSupported"]){const e=false;window["c3_runtimeInterface"]=new self.RuntimeInterface({useWorker:e,workerMainUrl:"https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/COBB-CAN-MOVE/workermain.js",runtimeScriptList:["https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/COBB-CAN-MOVE/scripts/c3main.js"],scriptFolder:"scripts/",exportType:"html5"})}
+"use strict";if(window["C3_IsSupported"]){const e=false;window["c3_runtimeInterface"]=new self.RuntimeInterface({useWorker:e,workerMainUrl:"https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/COBB-CAN-MOVE/workermain.js",runtimeScriptList:["https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Other/COBB-CAN-MOVE/scripts/c3main.js"],scriptFolder:"scripts/",exportType:"html5"})}
 
   </script>
 
