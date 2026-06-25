@@ -60,10 +60,10 @@
       src="https://os-worker.unityroom.com/unityroom_production/icon/298420/icon_20260518_124606.gif?h=1779075966"
       alt="END CREDITS" onerror="this.style.display='none'">
     <h2>END CREDITS</h2>
-    <div class="subtitle">8çªåºå£ã©ã¤ã¯ ãã©ã¼æ¢ç´¢ã²ã¼ã </div>
+    <div class="subtitle">8番出口ライク ホラー探索ゲーム</div>
     <div class="progress-wrap"><div class="progress-fill" id="pf"></div></div>
     <div class="pct" id="pct">0%</div>
-    <div class="cdn-label" id="cdn-label">æ¥ç¶ä¸­...</div>
+    <div class="cdn-label" id="cdn-label">接続中...</div>
   </div>
   <div id="gameContainer">
     <canvas id="unity-canvas"></canvas>
@@ -92,7 +92,7 @@
       loadingEl.innerHTML =
         "<h2 style=" + '"' + "color:#cc0000;font-family:monospace;letter-spacing:4px;" + '"' + ">ERROR</h2>" +
         "<p style=" + '"' + "color:#555;font-family:monospace;font-size:12px;text-align:center;max-width:300px;padding:0 20px;" + '"' + ">" +
-        (msg || "èª­ã¿è¾¼ã¿ã«å¤±æãã¾ãã") + "</p>";
+        (msg || "読み込みに失敗しました") + "</p>";
     }
     function setProgress(p) {
       var pct = Math.round(p * 100);
@@ -110,7 +110,7 @@
         productName:        "END CREDITS",
         productVersion:     "0"
       };
-      cdnLabel.textContent = "ã²ã¼ã ãã¼ã¿ãèª­ã¿è¾¼ã¿ä¸­...";
+      cdnLabel.textContent = "ゲームデータを読み込み中...";
       createUnityInstance(canvas, config, function (progress) {
         setProgress(progress);
       }).then(function () {
@@ -127,12 +127,12 @@
       ];
       var idx = 0;
       function tryNext() {
-        if (idx >= sources.length) { showError("ã­ã¼ãã¼ã®èª­ã¿è¾¼ã¿ã«å¤±æãã¾ãã"); return; }
+        if (idx >= sources.length) { showError("ローダーの読み込みに失敗しました"); return; }
         var src = sources[idx++];
-        cdnLabel.textContent = src.label + " ããæ¥ç¶ä¸­...";
+        cdnLabel.textContent = src.label + " から接続中...";
         var s = document.createElement("script");
         s.src = src.url;
-        s.onload = function () { cdnLabel.textContent = src.label + " æ¥ç¶æå"; startGame(); };
+        s.onload = function () { cdnLabel.textContent = src.label + " 接続成功"; startGame(); };
         s.onerror = function () { tryNext(); };
         document.body.appendChild(s);
       }
