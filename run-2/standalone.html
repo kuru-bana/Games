@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Run 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #000;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+        #gameContainer {
+            width: 100vw;
+            height: 100vh;
+        }
+        ruffle-player {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer"></div>
+
+    <script>
+        window.RufflePlayer = window.RufflePlayer || {};
+        window.RufflePlayer.config = {
+            warnOnUnsupportedContent: false,
+            autoplay: "on",
+            unmuteOverlay: "hidden",
+            maxExecutionDuration: 30,
+            base: null,
+            forceScale: false,
+            openUrlMode: "deny",
+            quality: "high"
+        };
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@ruffle-rs/ruffle"></script>
+
+    <script>
+        window.addEventListener("load", function () {
+            var ruffle = window.RufflePlayer.newest();
+            var player = ruffle.createPlayer();
+            var container = document.getElementById("gameContainer");
+            container.appendChild(player);
+            player.style.width = "100%";
+            player.style.height = "100%";
+            player.load("https://raw.githubusercontent.com/kuru-bana/Games/main/run-2/Run2.swf");
+        });
+    </script>
+</body>
+</html>
