@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -32,18 +32,18 @@
 <body>
 <div id="loading-screen">
   <img class="thumb" src="https://freezenova.com/lessons/img2/run-freezenova.webp" alt="Run 3 Freezenova" onerror="this.style.display='none'">
-  <h2>ð Run 3 Freezenova</h2>
+  <h2>🏃 Run 3 Freezenova</h2>
   <div class="progress-wrap"><div class="progress-fill" id="pf"></div></div>
   <div class="pct" id="pct">0%</div>
-  <div class="cdn-label" id="cdn-label">CDNã«æ¥ç¶ä¸­...</div>
+  <div class="cdn-label" id="cdn-label">CDNに接続中...</div>
 </div>
 <div id="gameContainer">
   <canvas id="unity-canvas" data-pixel-art=""></canvas>
 </div>
 <script>
 var CDN_PROVIDERS = [
-  "https://cdn.jsdelivr.net/gh/kuru-bana/Games@main",
-  "https://raw.githubusercontent.com/kuru-bana/Games/main"
+  "https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/FreezeNova",
+  "https://raw.githubusercontent.com/kuru-bana/Games/main/FreezeNova"
 ];
 
 function loadWithFallback(subpath, onSuccess, onFail) {
@@ -52,7 +52,7 @@ function loadWithFallback(subpath, onSuccess, onFail) {
     if (idx >= providers.length) { if (onFail) onFail(); return; }
     var base = providers[idx++];
     document.getElementById('cdn-label').textContent =
-      (base.includes('jsdelivr') ? 'jsDelivr' : 'GitHub Raw') + ' ããèª­ã¿è¾¼ã¿ä¸­...';
+      (base.includes('jsdelivr') ? 'jsDelivr' : 'GitHub Raw') + ' から読み込み中...';
     var s = document.createElement('script');
     s.src = base + subpath;
     s.onload = function() { onSuccess(base); };
@@ -98,8 +98,8 @@ loadWithFallback('/run-3-freezenova/Build/game.loader.js',
   },
   function() {
     document.getElementById('loading-screen').innerHTML =
-      '<h2 style="color:#ef4444;font-family:sans-serif;">CDNããã®èª­ã¿è¾¼ã¿ã«å¤±æãã¾ãã</h2>' +
-      '<p style="color:#888;font-family:sans-serif;font-size:13px;">jsDelivrã»GitHub Raw ã©ã¡ããå¿ç­ãªã</p>';
+      '<h2 style="color:#ef4444;font-family:sans-serif;">CDNからの読み込みに失敗しました</h2>' +
+      '<p style="color:#888;font-family:sans-serif;font-size:13px;">jsDelivr・GitHub Raw どちらも応答なし</p>';
   }
 );
 window.addEventListener('resize', onResize);
