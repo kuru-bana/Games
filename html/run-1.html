@@ -36,29 +36,29 @@
 <body>
 <div id="loading-screen">
   <img class="thumb" src="https://freezenova.com/lessons/img2/run-1-game.webp" alt="Run 1" onerror="this.style.display='none'">
-  <h2>ð½ Run 1</h2>
+  <h2>👽 Run 1</h2>
   <div class="progress-wrap"><div class="progress-fill"></div></div>
-  <div class="pct" id="pct">Ruffle ãèª­ã¿è¾¼ã¿ä¸­...</div>
-  <div class="cdn-label" id="cdn-label">CDNã«æ¥ç¶ä¸­...</div>
+  <div class="pct" id="pct">Ruffle を読み込み中...</div>
+  <div class="cdn-label" id="cdn-label">CDNに接続中...</div>
 </div>
 <div id="game-container"></div>
 <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 <script>
 var CDN_PROVIDERS = [
-  "https://cdn.jsdelivr.net/gh/kuru-bana/Games@main",
-  "https://raw.githubusercontent.com/kuru-bana/Games/main"
+  "https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/FreezeNova",
+  "https://raw.githubusercontent.com/kuru-bana/Games/main/FreezeNova"
 ];
 var idx = 0;
 
 function tryLoad() {
   if (idx >= CDN_PROVIDERS.length) {
-    document.getElementById('pct').textContent = 'èª­ã¿è¾¼ã¿ã«å¤±æãã¾ãã';
+    document.getElementById('pct').textContent = '読み込みに失敗しました';
     document.getElementById('pct').style.color = '#ef4444';
     return;
   }
   var base = CDN_PROVIDERS[idx++];
   document.getElementById('cdn-label').textContent =
-    (base.includes('jsdelivr') ? 'jsDelivr' : 'GitHub Raw') + ' ããèª­ã¿è¾¼ã¿ä¸­...';
+    (base.includes('jsdelivr') ? 'jsDelivr' : 'GitHub Raw') + ' から読み込み中...';
 
   var ruffle = window.RufflePlayer && window.RufflePlayer.newest();
   if (!ruffle) { setTimeout(tryLoad, 300); return; }
