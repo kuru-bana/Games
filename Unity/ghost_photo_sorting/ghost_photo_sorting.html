@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>心霊写真仕分けバイト</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; background: #050d0a; overflow: hidden; }
+    #loading-screen {
+      position: fixed; inset: 0; background: #050d0a;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 18px; z-index: 100;
+    }
+    #loading-screen .thumb {
+      width: 200px; height: 200px; object-fit: cover; border-radius: 8px;
+      border: 1px solid #27ae60aa;
+      box-shadow: 0 0 32px #27ae6066, 0 4px 24px #00000099;
+      image-rendering: pixelated;
+    }
+    #loading-screen h2 {
+      font-family: "Courier New", monospace; font-size: 18px; letter-spacing: 3px;
+      color: #2ecc71; text-shadow: 0 0 16px #27ae6099;
+    }
+    #loading-screen .subtitle {
+      font-family: "Courier New", monospace; font-size: 11px;
+      color: #555; letter-spacing: 2px;
+    }
+    #loading-screen .progress-wrap {
+      width: 280px; height: 4px; background: #001a08; border-radius: 2px; overflow: hidden;
+      border: 1px solid #1a5c30;
+    }
+    #loading-screen .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #145a32, #2ecc71);
+      width: 0%; transition: width 0.3s; border-radius: 2px;
+    }
+    #loading-screen .pct {
+      font-family: "Courier New", monospace; color: #27ae60; font-size: 12px; letter-spacing: 2px;
+    }
+    #loading-screen .cdn-label {
+      font-family: "Courier New", monospace; color: #2a2a2a; font-size: 10px; letter-spacing: 1px;
+    }
+    #gameContainer {
+      display: none; position: fixed; inset: 0;
+      background: #000; align-items: center; justify-content: center;
+    }
+    #gameContainer.active { display: flex; }
+    #unity-canvas {
+      display: block;
+      width: min(100vw, calc(100vh * 16 / 9));
+      height: min(100vh, calc(100vw * 9 / 16));
+      max-width: 100vw; max-height: 100vh;
+    }
+  </style>
+</head>
+<body>
+<div id="loading-screen">
+  <img class="thumb"
+    src="https://os-worker.unityroom.com/unityroom_production/icon/300476/icon_20260524_115357.gif?h=1779591237"
+    alt="心霊写真仕分けバイト" onerror="this.style.display='none'">
+  <h2>心霊写真仕分けバイト</h2>
+  <div class="subtitle">GHOST PHOTO SORTING</div>
+  <div class="progress-wrap"><div class="progress-fill" id="pf"></div></div>
+  <div class="pct" id="pct">0%</div>
+  <div class="cdn-label" id="cdn-label">接続中...</div>
+</div>
+<div id="gameContainer">
+  <canvas id="unity-canvas"></canvas>
+</div>
+<script>
+(function () {
+  var CDN = "https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/Unity/ghost_photo_sorting";
+  var RAW = "https://raw.githubusercontent.com/kuru-bana/Games/main/Unity/ghost_photo_sorting";
+  var UNITYROOM_DATA = "https://os-worker.unityroom.com/unityroom_production/game/76953/webgl/webgl.data.gz?h=1781960085";
+  var pfEl=document.getElementById("pf"),pctEl=document.getElementById("pct"),
+      cdnLabel=document.getElementById("cdn-label"),loadingEl=document.getElementById("loading-screen"),
+      container=document.getElementById("gameContainer"),canvas=document.getElementById("unity-canvas");
+  var started=false;
+  function showGame(){if(started)return;started=true;setTimeout(function(){loadingEl.style.display="none";container.classList.add("active");},800);}
+  function showError(msg){loadingEl.innerHTML="<h2 style=\"color:#2ecc71;font-family:monospace;letter-spacing:4px;\">ERROR</h2><p style=\"color:#555;font-family:monospace;font-size:12px;text-align:center;max-width:300px;padding:0 20px;\">"+(msg||"読み込みに失敗しました")+"</p>";}
+  function setProgress(p){var pct=Math.round(p*100);pfEl.style.width=pct+"%";pctEl.textContent=pct+"%";if(p>=1)showGame();}
+  function startGame(){
+    var config={dataUrl:UNITYROOM_DATA,frameworkUrl:CDN+"/webgl.framework.js",codeUrl:RAW+"/webgl.wasm",
+      streamingAssetsUrl:"https://os-worker.unityroom.com/unityroom_production/game/76953/streaming_assets",
+      companyName:"empty",productName:"empty",productVersion:"0"};
+    cdnLabel.textContent="ゲームデータを読み込み中...";
+    createUnityInstance(canvas,config,function(p){setProgress(p);}).then(function(){showGame();}).catch(function(m){showError(m);});
+    setTimeout(showGame,180000);
+  }
+  function loadLoader(){
+    var sources=[{url:CDN+"/webgl.loader.js",label:"jsDelivr"},{url:RAW+"/webgl.loader.js",label:"GitHub Raw"}];
+    var idx=0;
+    function tryNext(){if(idx>=sources.length){showError("ローダーの読み込みに失敗しました");return;}
+      var src=sources[idx++];cdnLabel.textContent=src.label+" から接続中...";
+      var s=document.createElement("script");s.src=src.url;
+      s.onload=function(){cdnLabel.textContent=src.label+" 接続成功";startGame();};
+      s.onerror=function(){tryNext();};document.body.appendChild(s);}
+    tryNext();
+  }
+  loadLoader();
+})();
+</script>
+</body>
+</html>
