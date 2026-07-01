@@ -27,10 +27,7 @@
         width: 0%; height: 100%; background: #fff;
         border-radius: 4px; transition: width 0.2s;
       }
-      #unity-logo {
-        font-size: 20px; font-weight: bold; margin-bottom: 8px;
-        color: #aaa; letter-spacing: 2px;
-      }
+      #unity-logo { font-size: 18px; font-weight: bold; color: #aaa; letter-spacing: 2px; }
     </style>
   </head>
   <body>
@@ -55,13 +52,13 @@
         var progressBarFull = document.querySelector("#unity-progress-bar-full");
 
         var config = {
-          dataUrl:      "https://github.com/kuru-bana/Games/releases/download/i-am-ai-v1/webgl.data.gz",
-          frameworkUrl: "https://github.com/kuru-bana/Games/releases/download/i-am-ai-v1/webgl.framework.js.gz",
-          codeUrl:      "https://github.com/kuru-bana/Games/releases/download/i-am-ai-v1/webgl.wasm.gz",
+          dataUrl:            "https://github.com/kuru-bana/Games/releases/download/i-am-ai-v1/webgl.data",
+          frameworkUrl:       "https://github.com/kuru-bana/Games/releases/download/i-am-ai-v1/webgl.framework.js",
+          codeUrl:            "https://github.com/kuru-bana/Games/releases/download/i-am-ai-v1/webgl.wasm",
           streamingAssetsUrl: "StreamingAssets",
-          companyName: "empty",
-          productName: "私はAIです。",
-          productVersion: "1.0",
+          companyName:        "empty",
+          productName:        "私はAIです。",
+          productVersion:     "1.0",
         };
 
         if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
@@ -72,7 +69,7 @@
 
         createUnityInstance(canvas, config, function(progress) {
           progressBarFull.style.width = (100 * progress) + "%";
-        }).then(function(unityInstance) {
+        }).then(function() {
           loadingBar.style.display = "none";
           resizeCanvas();
         }).catch(function(message) {
@@ -80,22 +77,15 @@
         });
 
         function resizeCanvas() {
-          var preferred_width = 960;
-          var preferred_height = 540;
-          var preferred_aspect_ratio = preferred_width / preferred_height;
-          var window_aspect_ratio = window.innerWidth / window.innerHeight;
-          var width, height;
-          if (window_aspect_ratio >= preferred_aspect_ratio) {
-            width = preferred_width * window.innerHeight / preferred_height;
-            height = window.innerHeight;
-          } else {
-            width = window.innerWidth;
-            height = preferred_height * window.innerWidth / preferred_width;
-          }
-          canvas.style.width = Math.round(width) + "px";
-          canvas.style.height = Math.round(height) + "px";
+          var pw = 960, ph = 540;
+          var wa = window.innerWidth / window.innerHeight;
+          var pa = pw / ph;
+          var w, h;
+          if (wa >= pa) { w = pw * window.innerHeight / ph; h = window.innerHeight; }
+          else          { w = window.innerWidth; h = ph * window.innerWidth / pw; }
+          canvas.style.width  = Math.round(w) + "px";
+          canvas.style.height = Math.round(h) + "px";
         }
-
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
       })();
