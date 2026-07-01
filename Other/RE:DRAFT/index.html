@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ゆう（@yuu_river34785）さんのポスト / Z</title>
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/redraft/img/favicon.ico" sizes="any">
+  <meta name="description" content="この原稿に、赤入れをしてください">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="RE:DRAFT">
+  <meta property="og:title" content="RE:DRAFT">
+  <meta property="og:description" content="この原稿に、赤入れをしてください">
+  <meta property="og:url" content="https://redraft-a1j.pages.dev/intro">
+  <meta property="og:image" content="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/redraft/img/redraft_kv.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="RE:DRAFT">
+  <meta name="twitter:description" content="この原稿に、赤入れをしてください">
+  <meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/redraft/img/redraft_kv.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;700&family=Yuji+Mai&family=Zen+Kurenaido&display=swap" rel="stylesheet">
+  <style>
+    /* ===== INTRO VIEW CSS ===== */
+    *,*:before,*:after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:'Noto Sans JP',Segoe UI,sans-serif;background:#000;color:#e7e9ea;line-height:1.5;font-size:15px;display:flex;justify-content:center}
+    a{color:inherit;text-decoration:none}
+    .z-column{width:100%;max-width:600px;min-height:100vh;border-left:1px solid #2f3336;border-right:1px solid #2f3336;display:flex;flex-direction:column}
+    .z-header{position:sticky;top:0;z-index:100;height:53px;display:flex;align-items:center;gap:24px;padding:0 16px;background:#000000b3;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid #2f3336}
+    .z-back{background:none;border:none;color:#e7e9ea;cursor:pointer;width:20px;height:20px;padding:0}
+    .z-back svg{width:20px;height:20px;display:block}
+    .z-header-title{font-size:20px;font-weight:700;flex:1}
+    .z-logo{color:#e7e9ea}
+    .z-logo svg{width:24px;height:24px;display:block}
+    .z-main{flex:1;display:flex;flex-direction:column}
+    .z-post{padding:12px 16px 4px;border-bottom:1px solid #2f3336}
+    .z-post-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .z-avatar{width:44px;height:44px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#fff}
+    .z-avatar-yuu{background:#6b7280}
+    .z-avatar-editor{background:#1d1f23;border:1px solid #2f3336}
+    .z-post-user{display:flex;flex-direction:column;line-height:1.3;flex:1}
+    .z-name{font-weight:700;color:#e7e9ea}
+    .z-handle{color:#71767b;font-size:14px}
+    .z-more{color:#71767b;font-size:18px;letter-spacing:1px}
+    .z-post-text{font-size:18px;line-height:1.6;margin-bottom:14px;color:#e7e9ea}
+    .z-quote{display:block;border:1px solid #2f3336;border-radius:16px;padding:12px;margin-bottom:14px;transition:background .15s;cursor:pointer}
+    .z-quote:hover{background:#080808}
+    .z-quote-head{display:flex;align-items:center;gap:5px;font-size:14px;margin-bottom:4px}
+    .z-quote .z-avatar-editor{width:20px;height:20px}
+    .z-quote-name{font-weight:700;color:#e7e9ea}
+    .z-quote-handle,.z-quote-time,.z-quote-sep{color:#71767b}
+    .z-quote-body{color:#e7e9ea;font-size:15px;line-height:1.5;margin:2px 0 4px}
+    .z-quote-url{color:#1d9bf0;font-size:15px;word-break:break-all;margin-top:2px}
+    .z-quote:hover .z-quote-url{text-decoration:underline}
+    .z-post-time{color:#71767b;font-size:14px;padding:14px 0;border-bottom:1px solid #2f3336}
+    .z-views{color:#e7e9ea;font-weight:700}
+    .z-post-actions{display:flex;justify-content:space-between;padding:12px 4px 4px;color:#71767b;font-size:13px}
+    .z-action{display:inline-flex;align-items:center;gap:8px;cursor:default}
+    .z-icon{width:18px;height:18px;display:block}
+    .z-count{line-height:1}
+    .z-disclaimer{text-align:center;padding:16px 16px 24px;font-size:11px;line-height:1.6;color:#555}
+    .z-disclaimer-fiction{font-size:10px}
+    @media(max-width:600px){.z-post-text{font-size:17px}}
+
+    /* ===== TRANSITION ===== */
+    #intro-view{transition:opacity 0.4s ease;}
+    #intro-view.fade-out{opacity:0;pointer-events:none;}
+    #game-view{display:none;position:fixed;inset:0;z-index:9999;}
+    #game-view.visible{display:block;}
+    #game-loading{
+      display:none;position:fixed;inset:0;z-index:10000;
+      background:#000;color:#e7e9ea;
+      align-items:center;justify-content:center;
+      font-family:'Noto Sans JP',sans-serif;font-size:14px;
+    }
+    #game-loading.visible{display:flex;}
+
+    /* ===== GAME DISCLAIMER ===== */
+    #site-disclaimer{
+      position:fixed;right:12px;bottom:10px;z-index:10001;
+      pointer-events:none;text-align:right;
+      font-family:'Noto Sans JP',sans-serif;font-size:8px;line-height:1.5;color:#555;
+    }
+    #site-disclaimer .disclaimer-fiction{font-size:7px;}
+  </style>
+</head>
+<body>
+
+<!-- ===== LOADING SCREEN ===== -->
+<div id="game-loading">
+  <span>ドキュメントを読み込み中...</span>
+</div>
+
+<!-- ===== INTRO VIEW ===== -->
+<div id="intro-view">
+  <div class="z-column">
+    <header class="z-header">
+      <button class="z-back" aria-label="戻る">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"/></svg>
+      </button>
+      <span class="z-header-title">ポスト</span>
+      <span class="z-logo" aria-label="Z">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h18v2.7L8.9 18.3H21V21H3v-2.7L15.1 5.7H3V3z"/></svg>
+      </span>
+    </header>
+
+    <main class="z-main">
+      <article class="z-post">
+        <div class="z-post-head">
+          <div class="z-avatar z-avatar-yuu">ゆ</div>
+          <div class="z-post-user">
+            <span class="z-name">ゆう</span>
+            <span class="z-handle">@yuu_river34785</span>
+          </div>
+          <span class="z-more" aria-hidden="true">···</span>
+        </div>
+
+        <div class="z-post-text">小説家かな？　共有リンク漏れてますよー</div>
+
+        <div class="z-quote" id="enter-game" role="button" tabindex="0">
+          <div class="z-quote-head">
+            <div class="z-avatar z-avatar-editor"></div>
+            <span class="z-quote-name">Yammer</span>
+            <span class="z-quote-handle">@yammer_4837</span>
+            <span class="z-quote-sep">·</span>
+            <span class="z-quote-time">5月某日</span>
+          </div>
+          <div class="z-quote-body">この原稿に、赤入れをしてください</div>
+          <div class="z-quote-url">https://re-draft.share-doc.app/index.html</div>
+        </div>
+
+        <div class="z-post-time">21:47 · 2026年5月某日 · <span class="z-views">23</span> 件の表示</div>
+
+        <div class="z-post-actions">
+          <span class="z-action">
+            <svg class="z-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01z"/></svg>
+            <span class="z-count">0</span>
+          </span>
+          <span class="z-action">
+            <svg class="z-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"/></svg>
+            <span class="z-count">0</span>
+          </span>
+          <span class="z-action">
+            <svg class="z-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91z"/></svg>
+            <span class="z-count">0</span>
+          </span>
+          <span class="z-action">
+            <svg class="z-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"/></svg>
+          </span>
+        </div>
+      </article>
+    </main>
+
+    <footer class="z-disclaimer">
+      <span class="z-disclaimer-fiction">このWebサイトはフィクションです。</span><br>
+      Copyright ©KAF. All Rights Reserved.
+    </footer>
+  </div>
+</div>
+
+<!-- ===== GAME VIEW ===== -->
+<div id="game-view">
+  <!--
+    このドキュメントを開いたあなたへ。
+    共有リンクはもう切ってあるはずでした。
+    でも、あなたがいますね。
+
+    指摘してください。お願いします。
+
+    2026.05.??
+  -->
+  <div id="root"></div>
+</div>
+
+<!-- ===== DISCLAIMER (game mode) ===== -->
+<div id="site-disclaimer" style="display:none;">
+  <span class="disclaimer-fiction">このWebサイトはフィクションです。</span><br>
+  Copyright ©KAF. All Rights Reserved.
+</div>
+
+<script>
+  const CDN_BASE = 'https://cdn.jsdelivr.net/gh/kuru-bana/Games@main/redraft/';
+
+  function loadGame() {
+    const introView = document.getElementById('intro-view');
+    const gameView = document.getElementById('game-view');
+    const gameLoading = document.getElementById('game-loading');
+    const disclaimer = document.getElementById('site-disclaimer');
+
+    // Show loading
+    gameLoading.classList.add('visible');
+    introView.classList.add('fade-out');
+
+    // Load game CSS
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = CDN_BASE + 'assets/main-D4w37a_u.css';
+    document.head.appendChild(link);
+
+    // Wait for CSS then load JS
+    link.onload = function() {
+      // Dynamically import the game JS module
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.crossOrigin = 'anonymous';
+      script.src = CDN_BASE + 'assets/main-CihQlYSk.js';
+      script.onload = function() {
+        // Give React time to mount
+        setTimeout(function() {
+          gameLoading.classList.remove('visible');
+          gameView.classList.add('visible');
+          disclaimer.style.display = 'block';
+          introView.style.display = 'none';
+        }, 300);
+      };
+      script.onerror = function() {
+        gameLoading.querySelector('span').textContent = '読み込みに失敗しました。ページを再読み込みしてください。';
+      };
+      document.body.appendChild(script);
+    };
+
+    link.onerror = function() {
+      link.onload();
+    };
+  }
+
+  // Enter game on quote card click
+  document.getElementById('enter-game').addEventListener('click', loadGame);
+  document.getElementById('enter-game').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') loadGame();
+  });
+</script>
+
+</body>
+</html>
